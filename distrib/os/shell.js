@@ -22,6 +22,8 @@ var TSOS;
             this.apologies = "[sorry]";
         }
         Shell.prototype.init = function () {
+            var todaysDate = false;
+            var atCraigRally = true;
             var sc;
             //
             // Load the command list.
@@ -48,6 +50,15 @@ var TSOS;
             this.commandList[this.commandList.length] = sc;
             // prompt <string>
             sc = new TSOS.ShellCommand(this.shellPrompt, "prompt", "<string> - Sets the prompt.");
+            this.commandList[this.commandList.length] = sc;
+            //date
+            sc = new TSOS.ShellCommand(this.shellDate, "date", "- Displays the current date and time.");
+            this.commandList[this.commandList.length] = sc;
+            //whereami
+            sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "- Displays Connor's current location.");
+            this.commandList[this.commandList.length] = sc;
+            //secretmessage
+            sc = new TSOS.ShellCommand(this.shellSecretMessage, "secretmessage", "- Displays a secret message provided you enter the correct commands first");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -195,6 +206,27 @@ var TSOS;
                     case "help":
                         _StdOut.putText("Help displays a list of (hopefully) valid commands.");
                         break;
+                    case "ver":
+                        _StdOut.putText("Ver displays the version information of the operating system.");
+                        break;
+                    case "shutdown":
+                        _StdOut.putText("Shuts down the virtual OS but leaves the underlying host / hardware simulation running.");
+                        break;
+                    case "cls":
+                        _StdOut.putText("Cls reset the CLI and the position of the cursor.");
+                        break;
+                    case "man":
+                        _StdOut.putText("Man displays an explanation for each command. These explanations can be seen all at once via the help command.");
+                        break;
+                    case "trace":
+                        _StdOut.putText("Trace disables/enables the trace in the host log.");
+                        break;
+                    case "rot13":
+                        _StdOut.putText("Rot13 obscures any string that is entered.");
+                        break;
+                    case "prompt":
+                        _StdOut.putText("Prompt will display any string that is entered in the CLI.");
+                        break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -244,6 +276,31 @@ var TSOS;
             }
             else {
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
+            }
+        };
+        Shell.prototype.shellDate = function (args) {
+            var displayDate = new Date();
+            var month = displayDate.getMonth();
+            var hours = displayDate.getHours();
+            var minutes = displayDate.getMinutes();
+            var year = displayDate.getFullYear();
+            var seconds = displayDate.getSeconds();
+            var day = displayDate.getDay();
+            _StdOut.putText(month + "/" + day + "/" + year + " " + hours + ":" + minutes + ":" + seconds);
+            todaysDate = true;
+        };
+        Shell.prototype.shellWhereAmI = function (args) {
+            _StdOut.putText("Currently at an anti Daniel Craig rally.");
+            atCraigRally = true;
+        };
+        Shell.prototype.shellSecretMessage = function (args) {
+            if (todaysDate && atCraigRally) {
+                _StdOut.putText("I'm actually a Pierce Brosnan fan myself");
+                todaysDate = false;
+                atCraigRally = false;
+            }
+            else {
+                _StdOut.putText("Entering two commands specifically, in any order, will display the secret message.");
             }
         };
         return Shell;
