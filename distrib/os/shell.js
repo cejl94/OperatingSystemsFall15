@@ -58,7 +58,10 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellWhereAmI, "whereami", "- Displays Connor's current location.");
             this.commandList[this.commandList.length] = sc;
             //secretmessage
-            sc = new TSOS.ShellCommand(this.shellSecretMessage, "secretmessage", "- Displays a secret message provided you enter the correct commands first");
+            sc = new TSOS.ShellCommand(this.shellSecretMessage, "secretmessage", "- Displays a secret message provided you enter the correct commands first.");
+            this.commandList[this.commandList.length] = sc;
+            //status
+            sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Displays the <string> in the task bar");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
@@ -227,6 +230,18 @@ var TSOS;
                     case "prompt":
                         _StdOut.putText("Prompt will display any string that is entered in the CLI.");
                         break;
+                    case "date":
+                        _StdOut.putText("Date will display today's date and time.");
+                        break;
+                    case "whereami":
+                        _StdOut.putText("Whereami will show Connor's current and permanent location.");
+                        break;
+                    case "secretmessage":
+                        _StdOut.putText("Secretmessage displays a message if you can figure it out.");
+                        break;
+                    case "status":
+                        _StdOut.putText("Status will display the user's status in the task bar.");
+                        break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -280,13 +295,18 @@ var TSOS;
         };
         Shell.prototype.shellDate = function (args) {
             var displayDate = new Date();
-            var month = displayDate.getMonth();
+            var month = displayDate.getMonth() + 1;
             var hours = displayDate.getHours();
             var minutes = displayDate.getMinutes();
             var year = displayDate.getFullYear();
             var seconds = displayDate.getSeconds();
-            var day = displayDate.getDay();
-            _StdOut.putText(month + "/" + day + "/" + year + " " + hours + ":" + minutes + ":" + seconds);
+            var day = displayDate.getDate();
+            if (seconds <= 9) {
+                var str = month + "/" + day + "/" + year + " " + hours + ":" + minutes + ":0" + seconds;
+            }
+            else {
+                var str = month + "/" + day + "/" + year + " " + hours + ":" + minutes + ":" + seconds;
+            }
             todaysDate = true;
         };
         Shell.prototype.shellWhereAmI = function (args) {
@@ -301,6 +321,12 @@ var TSOS;
             }
             else {
                 _StdOut.putText("Entering two commands specifically, in any order, will display the secret message.");
+            }
+        };
+        Shell.prototype.shellStatus = function (args) {
+            var htb = document.getElementById("htbOutput");
+            if (args.length > 0) {
+                htb.value = args[0];
             }
         };
         return Shell;

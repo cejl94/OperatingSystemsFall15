@@ -62,6 +62,28 @@ var TSOS;
             taLog.value = str + taLog.value;
             // TODO in the future: Optionally update a log database or some streaming service.
         };
+        Control.hostTaskBar = function () {
+            // Make the date
+            var date = new Date();
+            var month = date.getMonth() + 1;
+            var day = date.getDate();
+            var year = date.getFullYear();
+            var hours = date.getHours();
+            var minutes = date.getMinutes();
+            var seconds = date.getSeconds();
+            // Build the date string
+            if (seconds <= 9) {
+                var str = month + "/" + day + "/" + year + " " + hours + ":" + minutes + ":0" + seconds;
+            }
+            else {
+                var str = month + "/" + day + "/" + year + " " + hours + ":" + minutes + ":" + seconds;
+            }
+            var htb = document.getElementById("htbOutput");
+            htb.value = str;
+            //update the time every second
+            setTimeout(Control.hostTaskBar, 1000);
+            // TODO in the future: Optionally update a log database or some streaming service.
+        };
         //
         // Host Events
         //
@@ -81,6 +103,7 @@ var TSOS;
             // .. and call the OS Kernel Bootstrap routine.
             _Kernel = new TSOS.Kernel();
             _Kernel.krnBootstrap(); // _GLaDOS.afterStartup() will get called in there, if configured.
+            Control.hostTaskBar();
         };
         Control.hostBtnHaltOS_click = function (btn) {
             Control.hostLog("Emergency halt", "host");
