@@ -353,7 +353,7 @@ module TSOS {
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
             }
         }
-        
+        // Displays the date
         public shellDate(args){
         var displayDate = new Date();
         var month = displayDate.getMonth() + 1;
@@ -372,13 +372,13 @@ module TSOS {
         todaysDate = true;
 
         }
-        
+        // Displays my current and permanent location
         public shellWhereAmI(args){
         
         _StdOut.putText("Currently at an anti Daniel Craig rally.");
         atCraigRally = true;
         }
-        
+        //I'm a closet Brosnan fan
         public shellSecretMessage(args){
         
         	if (todaysDate && atCraigRally){
@@ -390,7 +390,11 @@ module TSOS {
         	_StdOut.putText("Entering two commands specifically, in any order, will display the secret message.");
         	}
         }
-
+        // posts the status string to the task bar. currently only stays on for 1 second
+        //until the time is updated again. this will be fixed (any issues you find on
+        // project one were due to lack of time for spending 10 hours on task bar
+        // this is because i forgot to actually call the method i made on startup
+        // screw me, right?
         public shellStatus(args){
             var htb = <HTMLInputElement> document.getElementById("htbOutput");
 
@@ -399,7 +403,7 @@ module TSOS {
           }
 
         }
-
+        // checks the user program input for hex characters and spaces only
         public shellLoad(args){
             var userInput = <HTMLInputElement> document.getElementById("taProgramInput");
             var toArray = userInput.value;

@@ -43,7 +43,8 @@ module TSOS {
                 }
                 // TODO: Check for caps-lock and handle as shifted if so.
                 _KernelInputQueue.enqueue(chr);
-            } else if (  // digits
+            } else if (  // ALL OF THE FOLLOWING CODE COULD BE BETTER AND IT WILL BE UPDATED AT SOME POINT. BUT I DIGRESS, IT WORKS.
+
                         (keyCode == 32)                     ||   // space
                         (keyCode == 13)                     ||   // enter
                         (keyCode == 8)) {       // backspace

@@ -34,7 +34,7 @@ module TSOS {
             this.currentXPosition = 0;
             this.currentYPosition = this.currentFontSize;
         }
-
+        //method that implements scrolling in the CLI
         private scrollableCanvas(): void {
 
             if(this.currentYPosition > _Canvas.height){
@@ -57,6 +57,7 @@ module TSOS {
                     // ... and reset our buffer.
                     this.buffer  = "";
                 }
+                //This is the backspace logic and implementation
                 else if(chr === String.fromCharCode(8)){
                     //split the buffer into a character array
                     var tempBuff = this.buffer.split('');
@@ -73,6 +74,7 @@ module TSOS {
                     // print it on the screen and deal with the most unholy annoyance EVER (original buffer stays on screen).
                     _DrawingContext.clearRect(0, this.currentYPosition - _DefaultFontSize, this.currentXPosition, _DefaultFontSize + 5);
                     this.currentXPosition = 0;
+
                     this.putText(">" + newBuff);
                 }
                 else {

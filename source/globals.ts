@@ -59,7 +59,7 @@ var _SarcasticMode: boolean = false;
 //secret message booleans
 var todaysDate: boolean = false;
 var atCraigRally: boolean = false;
-//var htb = <HTMLInputElement> document.getElementById("htbOutput");
+
 
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver; //  = null;
