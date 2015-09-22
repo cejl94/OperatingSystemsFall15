@@ -103,6 +103,12 @@ module TSOS {
                 "status",
                 "<string> - Displays the <string> in the task bar");
             this.commandList[this.commandList.length] = sc;
+
+            sc = new ShellCommand(this.shellLoad,
+                "load",
+                "- Checks the user program input for hex digits and spaces.");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
 
@@ -294,6 +300,9 @@ module TSOS {
                     case "status":
                         _StdOut.putText("Status will display the user's status in the task bar.");
                         break;
+                    case "load":
+                        _StdOut.putText("Load checks user program for appropriate characters.");
+                        break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -387,6 +396,10 @@ module TSOS {
           if(args.length > 0){
                htb.value = args[0];
           }
+
+        }
+
+        public shellLoad(args){
 
         }
 

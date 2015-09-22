@@ -35,6 +35,16 @@ module TSOS {
             this.currentYPosition = this.currentFontSize;
         }
 
+        private scrollableCanvas(): void {
+
+            if(this.currentYPosition > _Canvas.height){
+               var myCanvas= _DrawingContext.getImageData(0,0, _Canvas.width, _Canvas.height);
+                _Canvas.height += 500;
+                _DrawingContext.putImageData(myCanvas, 0, 0);
+            }
+
+        }
+
         public handleInput(): void {
             while (_KernelInputQueue.getSize() > 0) {
                 // Get the next character from the kernel input queue.
@@ -48,15 +58,22 @@ module TSOS {
                     this.buffer  = "";
                 }
                 else if(chr === String.fromCharCode(8)){
+                    //split the buffer into a character array
                     var tempBuff = this.buffer.split('');
+                    //create a new buffer that is empty
                     var newBuff = "";
+                    //loop through the array and add everything from the original buffer
+                    //with the exception of the last character (the one that should be deleted)
                     for(var i = 0; i < tempBuff.length - 1; i++){
                         newBuff += tempBuff[i];
                     }
+                    //set this.buffer to this new buffer I've made
                     this.buffer = newBuff;
                     _Kernel.krnTrace("Buffer= "+this.buffer);
-
-                    this.putText(newBuff);
+                    // print it on the screen and deal with the most unholy annoyance EVER (original buffer stays on screen).
+                    _DrawingContext.clearRect(0, this.currentYPosition - _DefaultFontSize, this.currentXPosition, _DefaultFontSize + 5);
+                    this.currentXPosition = 0;
+                    this.putText(">" + newBuff);
                 }
                 else {
                     // This is a "normal" character, so ...
@@ -98,6 +115,7 @@ module TSOS {
                                      _DrawingContext.fontDescent(this.currentFont, this.currentFontSize) +
                                      _FontHeightMargin;
 
+            this.scrollableCanvas();
             // TODO: Handle scrolling. (iProject 1)
         }
     }
