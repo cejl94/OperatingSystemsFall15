@@ -104,6 +104,7 @@ module TSOS {
                 "<string> - Displays the <string> in the task bar");
             this.commandList[this.commandList.length] = sc;
 
+            //Load
             sc = new ShellCommand(this.shellLoad,
                 "load",
                 "- Checks the user program input for hex digits and spaces.");
@@ -400,6 +401,31 @@ module TSOS {
         }
 
         public shellLoad(args){
+            var HexString = "0123456789ABCDEF";
+            var userInput = <HTMLInputElement> document.getElementById("taProgramInput");
+            var toArray = userInput.value;
+            //var test: boolean = false;
+            var counter = 0;
+            for(var i = 0; i < toArray.length; i++){
+
+                if(toArray.charAt(i).match(/[0-9A-Fa-f\s]/g) != null)
+                {
+
+                    counter++;
+                }
+
+
+
+            }
+                if(counter == toArray.length){
+                    _StdOut.putText("All digits are good.");
+                }
+                else{
+                    _StdOut.putText("You have entered an incorrect digit.");
+
+                }
+
+
 
         }
 

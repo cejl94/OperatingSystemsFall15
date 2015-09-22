@@ -63,6 +63,9 @@ var TSOS;
             //status
             sc = new TSOS.ShellCommand(this.shellStatus, "status", "<string> - Displays the <string> in the task bar");
             this.commandList[this.commandList.length] = sc;
+            //Load
+            sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Checks the user program input for hex digits and spaces.");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -242,6 +245,9 @@ var TSOS;
                     case "status":
                         _StdOut.putText("Status will display the user's status in the task bar.");
                         break;
+                    case "load":
+                        _StdOut.putText("Load checks user program for appropriate characters.");
+                        break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -327,6 +333,24 @@ var TSOS;
             var htb = document.getElementById("htbOutput");
             if (args.length > 0) {
                 htb.value = args[0];
+            }
+        };
+        Shell.prototype.shellLoad = function (args) {
+            var HexString = "0123456789ABCDEF";
+            var userInput = document.getElementById("taProgramInput");
+            var toArray = userInput.value;
+            //var test: boolean = false;
+            var counter = 0;
+            for (var i = 0; i < toArray.length; i++) {
+                if (toArray.charAt(i).match(/[0-9A-Fa-f\s]/g) != null) {
+                    counter++;
+                }
+            }
+            if (counter == toArray.length) {
+                _StdOut.putText("All digits are good.");
+            }
+            else {
+                _StdOut.putText("You have entered an incorrect digit.");
             }
         };
         return Shell;
