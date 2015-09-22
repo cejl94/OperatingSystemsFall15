@@ -336,10 +336,8 @@ var TSOS;
             }
         };
         Shell.prototype.shellLoad = function (args) {
-            var HexString = "0123456789ABCDEF";
             var userInput = document.getElementById("taProgramInput");
             var toArray = userInput.value;
-            //var test: boolean = false;
             var counter = 0;
             for (var i = 0; i < toArray.length; i++) {
                 if (toArray.charAt(i).match(/[0-9A-Fa-f\s]/g) != null) {

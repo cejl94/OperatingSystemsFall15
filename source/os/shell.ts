@@ -401,10 +401,8 @@ module TSOS {
         }
 
         public shellLoad(args){
-            var HexString = "0123456789ABCDEF";
             var userInput = <HTMLInputElement> document.getElementById("taProgramInput");
             var toArray = userInput.value;
-            //var test: boolean = false;
             var counter = 0;
             for(var i = 0; i < toArray.length; i++){
 
@@ -413,8 +411,6 @@ module TSOS {
 
                     counter++;
                 }
-
-
 
             }
                 if(counter == toArray.length){
