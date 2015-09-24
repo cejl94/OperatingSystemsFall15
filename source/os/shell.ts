@@ -38,12 +38,14 @@ module TSOS {
                                   "ver",
                                   "- Displays the current version data.");
             this.commandList[this.commandList.length] = sc;
+            
 
             // help
             sc = new ShellCommand(this.shellHelp,
                                   "help",
                                   "- This is the help command. Seek help.");
             this.commandList[this.commandList.length] = sc;
+
 
             // shutdown
             sc = new ShellCommand(this.shellShutdown,
@@ -354,6 +356,7 @@ module TSOS {
             }
         }
         // Displays the date
+        //
         public shellDate(args){
         var displayDate = new Date();
         var month = displayDate.getMonth() + 1;
@@ -364,10 +367,12 @@ module TSOS {
         var day  = displayDate.getDate();
             if(seconds <=9){
                 var str = month + "/" + day + "/" + year + " " + hours + ":" + minutes + ":0" + seconds;
+                _StdOut.putText(str);
             }
             else {
 
                 var str = month + "/" + day + "/" + year + " " + hours + ":" + minutes + ":" + seconds;
+                _StdOut.putText(str);
             }
         todaysDate = true;
 

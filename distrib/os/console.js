@@ -33,6 +33,7 @@ var TSOS;
             this.currentXPosition = 0;
             this.currentYPosition = this.currentFontSize;
         };
+        //method that implements scrolling in the CLI
         Console.prototype.scrollableCanvas = function () {
             if (this.currentYPosition > _Canvas.height) {
                 var myCanvas = _DrawingContext.getImageData(0, 0, _Canvas.width, _Canvas.height);

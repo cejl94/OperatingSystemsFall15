@@ -62,6 +62,8 @@ var TSOS;
             taLog.value = str + taLog.value;
             // TODO in the future: Optionally update a log database or some streaming service.
         };
+        // This method posts the time to the task bar. Updates will be made to allow for the time and status
+        //on the task bar at the same time
         Control.hostTaskBar = function () {
             // Make the date
             var date = new Date();
@@ -103,6 +105,7 @@ var TSOS;
             // .. and call the OS Kernel Bootstrap routine.
             _Kernel = new TSOS.Kernel();
             _Kernel.krnBootstrap(); // _GLaDOS.afterStartup() will get called in there, if configured.
+            //on startup, display the current date and time in the task bar
             Control.hostTaskBar();
         };
         Control.hostBtnHaltOS_click = function (btn) {

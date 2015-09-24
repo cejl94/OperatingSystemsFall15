@@ -299,6 +299,8 @@ var TSOS;
                 _StdOut.putText("Usage: prompt <string>  Please supply a string.");
             }
         };
+        // Displays the date
+        //
         Shell.prototype.shellDate = function (args) {
             var displayDate = new Date();
             var month = displayDate.getMonth() + 1;
@@ -309,16 +311,20 @@ var TSOS;
             var day = displayDate.getDate();
             if (seconds <= 9) {
                 var str = month + "/" + day + "/" + year + " " + hours + ":" + minutes + ":0" + seconds;
+                _StdOut.putText(str);
             }
             else {
                 var str = month + "/" + day + "/" + year + " " + hours + ":" + minutes + ":" + seconds;
+                _StdOut.putText(str);
             }
             todaysDate = true;
         };
+        // Displays my current and permanent location
         Shell.prototype.shellWhereAmI = function (args) {
             _StdOut.putText("Currently at an anti Daniel Craig rally.");
             atCraigRally = true;
         };
+        //I'm a closet Brosnan fan
         Shell.prototype.shellSecretMessage = function (args) {
             if (todaysDate && atCraigRally) {
                 _StdOut.putText("I'm actually a Pierce Brosnan fan myself");
@@ -329,12 +335,18 @@ var TSOS;
                 _StdOut.putText("Entering two commands specifically, in any order, will display the secret message.");
             }
         };
+        // posts the status string to the task bar. currently only stays on for 1 second
+        //until the time is updated again. this will be fixed (any issues you find on
+        // project one were due to lack of time for spending 10 hours on task bar
+        // this is because i forgot to actually call the method i made on startup
+        // screw me, right?
         Shell.prototype.shellStatus = function (args) {
             var htb = document.getElementById("htbOutput");
             if (args.length > 0) {
                 htb.value = args[0];
             }
         };
+        // checks the user program input for hex characters and spaces only
         Shell.prototype.shellLoad = function (args) {
             var userInput = document.getElementById("taProgramInput");
             var toArray = userInput.value;
