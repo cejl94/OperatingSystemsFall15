@@ -47,7 +47,8 @@ module TSOS {
 
                         (keyCode == 32)                     ||   // space
                         (keyCode == 13)                     ||   // enter
-                        (keyCode == 8)) {       // backspace
+                        (keyCode == 8)                   ||
+            (keyCode == 9)){       // backspace
                 chr = String.fromCharCode(keyCode);
                 _KernelInputQueue.enqueue(chr);
             }

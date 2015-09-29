@@ -45,6 +45,21 @@ var TSOS;
             while (_KernelInputQueue.getSize() > 0) {
                 // Get the next character from the kernel input queue.
                 var chr = _KernelInputQueue.dequeue();
+                // Logic and implementation of tab complete
+                if (chr === String.fromCharCode(9)) {
+                    this.buffer = "";
+                    _Kernel.krnTrace("" + _OsShell.commandList[1].command);
+                    for (var i = 0; i < _OsShell.commandList.length; i++) {
+                        if (_OsShell.commandList[i].command.startsWith(this.buffer)) {
+                            _Kernel.krnTrace("Command= " + _OsShell.commandList[i].command);
+                            this.buffer = _OsShell.commandList[i].command;
+                            _Kernel.krnTrace("Buffer= " + this.buffer);
+                            _DrawingContext.clearRect(0, this.currentYPosition - _DefaultFontSize, this.currentXPosition, _DefaultFontSize + 5);
+                            this.currentXPosition = 0;
+                            this.putText(">" + this.buffer);
+                        }
+                    }
+                }
                 // Check to see if it's "special" (enter or ctrl-c) or "normal" (anything else that the keyboard device driver gave us).
                 if (chr === String.fromCharCode(13)) {
                     // The enter key marks the end of a console command, so ...
