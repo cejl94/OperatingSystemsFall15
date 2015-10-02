@@ -80,7 +80,7 @@ var TSOS;
             else {
                 var str = month + "/" + day + "/" + year + " " + hours + ":" + minutes + ":" + seconds;
             }
-            var htb = document.getElementById("htbOutput");
+            var htb = document.getElementById("htbOutput1");
             htb.value = str;
             //update the time every second
             setTimeout(Control.hostTaskBar, 1000);

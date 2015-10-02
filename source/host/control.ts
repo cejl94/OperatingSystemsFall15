@@ -93,7 +93,7 @@ module TSOS {
 
             var str = month + "/" + day + "/" + year + " " + hours + ":" + minutes + ":" + seconds;
             }
-            var htb = <HTMLInputElement> document.getElementById("htbOutput");
+            var htb = <HTMLInputElement> document.getElementById("htbOutput1");
             htb.value = str;
             //update the time every second
             setTimeout(Control.hostTaskBar, 1000);

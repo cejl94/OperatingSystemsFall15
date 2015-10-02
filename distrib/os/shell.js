@@ -66,6 +66,9 @@ var TSOS;
             //Load
             sc = new TSOS.ShellCommand(this.shellLoad, "load", "- Checks the user program input for hex digits and spaces.");
             this.commandList[this.commandList.length] = sc;
+            //BSOD
+            sc = new TSOS.ShellCommand(this.shellBSOD, "bsod", "- Displays a BSOD Message and shuts down the OS");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -248,6 +251,9 @@ var TSOS;
                     case "load":
                         _StdOut.putText("Load checks user program for appropriate characters.");
                         break;
+                    case "bsod":
+                        _StdOut.putText("Bsod displays a bsod message and shuts down the OS.");
+                        break;
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -341,9 +347,9 @@ var TSOS;
         // this is because i forgot to actually call the method i made on startup
         // screw me, right?
         Shell.prototype.shellStatus = function (args) {
-            var htb = document.getElementById("htbOutput");
+            var htb = document.getElementById("htbOutput2");
             if (args.length > 0) {
-                htb.value = args[0];
+                htb.value = args;
             }
         };
         // checks the user program input for hex characters and spaces only
@@ -362,6 +368,10 @@ var TSOS;
             else {
                 _StdOut.putText("You have entered an incorrect digit.");
             }
+        };
+        Shell.prototype.shellBSOD = function (args) {
+            _StdOut.putText("The operating system is crashing uber hard right now.");
+            _StdOut.putText(_Kernel.krnTrapError("An error has been found. Your Operating System will self destruct now."));
         };
         return Shell;
     })();
