@@ -60,7 +60,7 @@ var _SarcasticMode: boolean = false;
 var todaysDate: boolean = false;
 var atCraigRally: boolean = false;
 
-
+ 
 // Global Device Driver Objects - page 12
 var _krnKeyboardDriver; //  = null;
 
