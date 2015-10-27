@@ -1,5 +1,7 @@
 ///<reference path="../globals.ts" />
 ///<reference path="queue.ts" />
+///<reference path="memoryManager.ts" />
+///<reference path="pcb.ts" />
 
 /* ------------
      Kernel.ts

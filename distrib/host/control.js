@@ -32,6 +32,8 @@ var TSOS;
             _Canvas = document.getElementById('display');
             // Get a global reference to the drawing context.
             _DrawingContext = _Canvas.getContext("2d");
+            coreMemoryTable = document.getElementById("coreMemoryTable");
+            cpuTable = document.getElementById("cpuTable");
             // Enable the added-in canvas text functions (see canvastext.ts for provenance and details).
             TSOS.CanvasTextFunctions.enable(_DrawingContext); // Text functionality is now built in to the HTML5 canvas. But this is old-school, and fun, so we'll keep it.
             // Clear the log text box.
@@ -42,6 +44,7 @@ var TSOS;
             document.getElementById("btnStartOS").focus();
             // Check for our testing and enrichment core, which
             // may be referenced here (from index.html) as function Glados().
+            this.createMemoryTable();
             if (typeof Glados === "function") {
                 // function Glados() is here, so instantiate Her into
                 // the global (and properly capitalized) _GLaDOS variable.
@@ -99,7 +102,10 @@ var TSOS;
             document.getElementById("display").focus();
             // ... Create and initialize the CPU (because it's part of the hardware)  ...
             _CPU = new TSOS.Cpu(); // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
-            _CPU.init(); //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
+            _CPU.init();
+            memManager = new TSOS.memoryManager(); //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
+            mem = new TSOS.memory();
+            mem.init();
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
@@ -123,6 +129,57 @@ var TSOS;
             // That boolean parameter is the 'forceget' flag. When it is true it causes the page to always
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
+        };
+        Control.createMemoryTable = function () {
+            //32 rows(256/8) = 32
+            //9 columns incleading a header
+            for (var x = 0; x < 32; x++) {
+                var row = coreMemoryTable.insertRow(x);
+                for (var y = 0; y < 9; y++) {
+                    var cell = row.insertCell(y);
+                    if (y == 0) {
+                        var header = (x * 8).toString(16);
+                        cell.innerHTML = "0x" + header;
+                    }
+                    else {
+                        cell.innerHTML = "00";
+                    }
+                }
+            }
+        };
+        Control.updateMemoryTable = function () {
+            //this will grab the opCode sitting in memory
+            var counter = 0;
+            //pretty much the same thing as initialize, just with different values
+            for (var x = 0; x < 32; x++) {
+                var row = coreMemoryTable.insertRow(x);
+                for (var y = 0; y < 9; y++) {
+                    var cell = row.insertCell(y);
+                    if (y == 0) {
+                        var header = (x * 8).toString(16);
+                        cell.innerHTML = "0x" + header;
+                    }
+                    else {
+                        cell.innerHTML = mem.opcodeMemory[counter];
+                        counter++;
+                    }
+                }
+            }
+        };
+        Control.updateCPUtable = function () {
+            var rows = cpuTable.rows[1];
+            var cells = rows.cells[0];
+            cells.innerHTML = _CPU.PC.toString();
+            cells = rows.cells[1];
+            cells.innerHTML = mem.opcodeMemory[_CPU.PC];
+            cells = rows.cells[2];
+            cells.innerHTML = _CPU.Acc.toString();
+            cells = rows.cells[3];
+            cells.innerHTML = _CPU.Xreg.toString();
+            cells = rows.cells[4];
+            cells.innerHTML = _CPU.Yreg.toString();
+            cells = rows.cells[5];
+            cells.innerHTML = _CPU.Zflag.toString();
         };
         return Control;
     })();

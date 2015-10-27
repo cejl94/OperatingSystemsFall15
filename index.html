@@ -15,13 +15,15 @@
    <script type="text/javascript" src="distrib/host/control.js"></script>
    <script type="text/javascript" src="distrib/host/devices.js"></script>
    <script type="text/javascript" src="distrib/host/cpu.js"></script>
-
+   <script type="text/javascript" src="distrib/host/memory.js"></script>
    <!-- Virtual OS Routines: Make sure Kernel code is last, since it needs those above it. -->
    <script type="text/javascript" src="distrib/os/interrupt.js"></script>
    <script type="text/javascript" src="distrib/os/canvastext.js"></script>
    <script type="text/javascript" src="distrib/os/console.js"></script>
    <script type="text/javascript" src="distrib/os/deviceDriver.js"></script>
    <script type="text/javascript" src="distrib/os/deviceDriverKeyboard.js"></script>
+   <script type="text/javascript" src="distrib/os/memoryManager.js"></script>
+   <script type="text/javascript" src="distrib/os/pcb.js"></script>
    <script type="text/javascript" src="distrib/os/queue.js"></script>
    <script type="text/javascript" src="distrib/os/shell.js"></script>
    <script type="text/javascript" src="distrib/os/shellCommand.js"></script>
@@ -31,8 +33,7 @@
    <!-- Other Routines -->
    <script type="text/javascript" src="distrib/utils.js"></script>
    <!-- Uncomment this line below to enable GLaDOS testing -->
-  <script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script>
-</head>
+    <script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script></head>
 
 <body onload="onDocumentLoad()">
 
@@ -40,6 +41,7 @@
 
    <div id="divButtonBar" style="margin:4px;">
       <input type="button"
+             style="background-color: goldenrod"
              id = "btnStartOS"
              name="brnStartOS"
              class="normal_button"
@@ -48,6 +50,7 @@
              onclick="TSOS.Control.hostBtnStartOS_click(this);">
 
       <input type="button"
+             style="background-color: goldenrod"
              id = "btnHaltOS"
              name="brnHaltOS"
              class="normal_button"
@@ -57,6 +60,7 @@
              onclick="TSOS.Control.hostBtnHaltOS_click(this);">
 
       <input type="button"
+             style="background-color: goldenrod"
              id = "btnReset"
              name="brnReset"
              class="normal_button"
@@ -68,61 +72,127 @@
 
    <div id="divConsole" style="margin:4px; width:500px; height:500px; float:left; overflow:scroll;">
       <canvas id="display"
+              style="background-color: black; color: goldenrod"
               width="500px"
               height="500px"
               tabindex="3">
       </canvas>
    </div>
 
-   <div id="divLog" style="margin-left:520px;">
-      <label>
-         Host Log
-         <br>
+
+
+
+
+
+      <div id="divLog" style="float: left;">
+          <label style="color: goldenrod;">
+              Host Log
+              <br>
          <textarea name="taHostLog"
+                   style="background-color: black; color: goldenrod"
+
                    id  ="taHostLog"
                    rows="26"
                    cols="48"
-         ></textarea>
-      </label>
-   </div>
+                 ></textarea>
+          </label>
+      </div>
 
-   <div id="divUserProgramInput" style="margin-left:520px;">
-      <label>
-         User Program Input
-         <br>
+    <div id="CPU">
+        <label style="color: goldenrod;">
+           CPU
+        </label>
+        <table id="cpuTable" style="background-color: black; color: goldenrod" class="table table-condensed table-bordered">
+            <thead>
+            <tr>
+                <th> PC</th>
+                <th> IR</th>
+                <th> Acc</th>
+                <th> X </th>
+                <th> Y </th>
+                <th> Z </th>
+
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td> 0 <td>
+                <td> 0 </td>
+                <td> 0 </td>
+                <td> 0 </td>
+                <td> 0 </td>
+                <td> 0 </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+      <div id="divUserProgramInput" style="margin-left:520px;">
+          <label style="color: goldenrod;">
+              User Program Input
+              <br>
          <textarea name="taProgramInput"
+                   style="background-color: black; color: goldenrod"
                    id  ="taProgramInput"
                    rows="8"
                    cols="48"
-         ></textarea>
-      </label>
-   </div>
-<!-- This is the div for the task bar date-->
-    <div id="hostTaskBar1" style="margin-left:520px;">
-        <label>
-            Task Bar
-            <br>
+                 ></textarea>
+          </label>
+      </div>
+      <!-- This is the div for the task bar date-->
+      <div id="hostTaskBar1" style="margin-left:530px;">
+          <label style="color: goldenrod;">
+              Time
+              <br>
             <textarea name="htbOutput1"
+                      style="background-color: black; color: goldenrod"
                       id="htbOutput1"
                       rows="2"
                       cols="24"
                     ></textarea>
-        </label>
-    </div>
-</div>
-<!-- This is the div for the task bar status-->
-<div id="hostTaskBar2" style="margin-left:520px;">
-    <label>
-        Task Bar
-        <br>
+          </label>
+      </div>
+
+      <!-- This is the div for the task bar status-->
+      <div id="hostTaskBar2" style="margin-left:530px;">
+          <label style="color: goldenrod;">
+              Status
+              <br>
             <textarea name="htbOutput2"
+                      style="background-color: black; color: goldenrod"
                       id="htbOutput2"
                       rows="2"
                       cols="24"
                     ></textarea>
-    </label>
-</div>
-</div>
+          </label>
+      </div>
+    <div class="dash" style="width: 33.3%; height: 100%;">
+
+        <div id="coreMemory" style="overflow:scroll";>
+            <label style="color: goldenrod;">
+                Memory
+            </label>
+            <table id="coreMemoryTable" style="background-color: black; color: goldenrod" class="table table-condensed table-bordered">
+
+
+            </table>
+        </div>
+    </div>
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
 
 
 <p class="footerText" style="clear:both;">

@@ -35,6 +35,9 @@ module TSOS {
 
             // Get a global reference to the drawing context.
             _DrawingContext = _Canvas.getContext("2d");
+            coreMemoryTable= <HTMLTableElement> document.getElementById("coreMemoryTable");
+            cpuTable=<HTMLTableElement> document.getElementById("cpuTable");
+
 
             // Enable the added-in canvas text functions (see canvastext.ts for provenance and details).
             CanvasTextFunctions.enable(_DrawingContext);   // Text functionality is now built in to the HTML5 canvas. But this is old-school, and fun, so we'll keep it.
@@ -49,6 +52,7 @@ module TSOS {
 
             // Check for our testing and enrichment core, which
             // may be referenced here (from index.html) as function Glados().
+            this.createMemoryTable();
             if (typeof Glados === "function") {
                 // function Glados() is here, so instantiate Her into
                 // the global (and properly capitalized) _GLaDOS variable.
@@ -118,7 +122,11 @@ module TSOS {
 
             // ... Create and initialize the CPU (because it's part of the hardware)  ...
             _CPU = new Cpu();  // Note: We could simulate multi-core systems by instantiating more than one instance of the CPU here.
-            _CPU.init();       //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
+            _CPU.init();
+            memManager = new memoryManager();//       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
+            mem = new memory();
+            mem.init();
+
 
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
@@ -148,6 +156,81 @@ module TSOS {
             // That boolean parameter is the 'forceget' flag. When it is true it causes the page to always
             // be reloaded from the server. If it is false or not specified the browser may reload the
             // page from its cache, which is not what we want.
+        }
+
+        public static createMemoryTable():void {
+
+            //32 rows(256/8) = 32
+            //9 columns incleading a header
+
+
+            for(var x = 0; x < 32; x++){
+                var row = <HTMLTableRowElement>coreMemoryTable.insertRow(x);
+                for(var y = 0; y < 9; y++){
+                    var cell = row.insertCell(y);
+                    if(y== 0){
+                        var header = (x*8).toString(16);
+                        cell.innerHTML = "0x" + header;
+
+
+                    }
+                    else{
+                        cell.innerHTML = "00";
+                    }
+
+                }
+            }
+
+
+        }
+
+        public static updateMemoryTable():void{
+
+            //this will grab the opCode sitting in memory
+            var counter = 0;
+            //pretty much the same thing as initialize, just with different values
+            for(var x = 0; x < 32; x++){
+                var row = <HTMLTableRowElement>coreMemoryTable.insertRow(x);
+                for(var y = 0; y < 9; y++){
+                    var cell = row.insertCell(y);
+                    if(y== 0){
+                        var header = (x*8).toString(16);
+                        cell.innerHTML = "0x" + header;
+
+
+                    }
+                    else{
+                        cell.innerHTML = mem.opcodeMemory[counter];
+                        counter++;
+                    }
+
+                }
+
+            }
+        }
+
+
+
+        public static updateCPUtable():void{
+
+            var rows = <HTMLTableRowElement>cpuTable.rows[1];
+            var cells = <HTMLElement>rows.cells[0];
+
+            cells.innerHTML = _CPU.PC.toString();
+            cells = <HTMLElement>rows.cells[1];
+            cells.innerHTML = mem.opcodeMemory[_CPU.PC];
+            cells = <HTMLElement>rows.cells[2];
+            cells.innerHTML = _CPU.Acc.toString();
+            cells = <HTMLElement>rows.cells[3];
+            cells.innerHTML = _CPU.Xreg.toString();
+            cells = <HTMLElement>rows.cells[4];
+            cells.innerHTML = _CPU.Yreg.toString();
+            cells = <HTMLElement>rows.cells[5];
+            cells.innerHTML = _CPU.Zflag.toString();
+
+
+
+
         }
     }
 }

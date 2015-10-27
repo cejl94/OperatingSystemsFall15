@@ -1,7 +1,11 @@
 /* TSOS.css */
 
 body {
-  background: #909193 url(distrib/images/linen.png) repeat;
+  background:  url(distrib/images/GoldenEye_-_Gun_Barrel.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;;
   font-family: Helvetica, Verdana, Arial, sans-serif;
   font-size: 12pt;
   font-weight: normal;
@@ -34,6 +38,33 @@ h3 {
   background-color:#DFDBC3;
   border: 2px solid red;
   cursor: default;
+}
+.dash{
+  float: left;
+  overflow-x:hidden;
+  overflow-y:auto;
+  width: 400px;
+  height: 250px;
+
+}
+
+#coreMemoryTable{
+  overflow-x:hidden;
+  overflow-y:auto;
+  background-color: white;
+  color: black;
+  border:1px solid blue;
+  width: 400px;
+  height: 250px;
+
+}
+
+#cpuTable{
+  border:1px solid green;
+  width: 200px;
+  height: 75px;
+
+
 }
 
 .normal_button {

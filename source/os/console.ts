@@ -51,7 +51,7 @@ module TSOS {
 
         private tabComplete(): void{
 
-            var goodBuffer = this.buffer.replace("\t", "");
+            var goodBuffer = this.buffer.replace(/[\t]/g, "");
             _Kernel.krnTrace("buffer is: " + goodBuffer+".");
 
             for (var i = 0; i < _OsShell.commandList.length; i++) {
@@ -65,6 +65,7 @@ module TSOS {
 
             }
             if(this.matchArray.length == 0){
+                this.advanceLine();
                 this.putText("There are no commands starting with this letter");
                 this.advanceLine();
                 this.putText(">" + this.buffer.trim());

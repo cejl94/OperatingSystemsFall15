@@ -69,6 +69,9 @@ var TSOS;
             //BSOD
             sc = new TSOS.ShellCommand(this.shellBSOD, "bsod", "- Displays a BSOD Message and shuts down the OS");
             this.commandList[this.commandList.length] = sc;
+            //Run
+            sc = new TSOS.ShellCommand(this.shellRun, "run", "<number>- Executes the program with the given pid");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
             // kill <id> - kills the specified process id.
             //
@@ -254,6 +257,8 @@ var TSOS;
                     case "bsod":
                         _StdOut.putText("Bsod displays a bsod message and shuts down the OS.");
                         break;
+                    case "run":
+                        _StdOut.putText("Run executes a user program with the sepcified pid.");
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -357,21 +362,42 @@ var TSOS;
             var userInput = document.getElementById("taProgramInput");
             var toArray = userInput.value;
             var counter = 0;
+            _Kernel.krnTrace("the input value is " + userInput.value + ".");
             for (var i = 0; i < toArray.length; i++) {
+                if (userInput.value.length == 0) {
+                    _StdOut.putText("Please enter hex digits, buddy");
+                }
                 if (toArray.charAt(i).match(/[0-9A-Fa-f\s]/g) != null) {
                     counter++;
                 }
             }
             if (counter == toArray.length) {
                 _StdOut.putText("All digits are good.");
+                var instructions = toArray.replace(/[\s]/g, "");
+                memManager.loadInputToMemory(instructions);
+                prosBlock = new TSOS.pcb();
+                prosBlock.init(pid);
+                _StdOut.putText("Program successfully loaded, pid = " + prosBlock.pid);
+                TSOS.Control.updateMemoryTable();
             }
             else {
                 _StdOut.putText("You have entered an incorrect digit.");
             }
+            // take the input and get rid of spacing
         };
         Shell.prototype.shellBSOD = function (args) {
             _StdOut.putText("The operating system is crashing uber hard right now.");
             _StdOut.putText(_Kernel.krnTrapError("An error has been found. Your Operating System will self destruct now."));
+        };
+        Shell.prototype.shellRun = function (args) {
+            if (parseInt(args) == pid) {
+                _CPU.PC = 0;
+                _CPU.isExecuting = true;
+                pid++;
+            }
+            else {
+                _StdOut.putText("This is not a valid pid, please enter the correct pid");
+            }
         };
         return Shell;
     })();

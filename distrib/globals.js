@@ -21,6 +21,11 @@ var KEYBOARD_IRQ = 1;
 // TODO: Make a global object and use that instead of the "_" naming convention in the global namespace.
 //
 var _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
+var mem;
+var memManager;
+var coreMemoryTable;
+var cpuTable;
+var prosBlock;
 var _OSclock = 0; // Page 23.
 var _Mode = 0; // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.
 var _Canvas; // Initialized in Control.hostInit().
@@ -40,6 +45,7 @@ var _StdOut;
 // UI
 var _Console;
 var _OsShell;
+var pid = 0;
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode = false;
 //secret message booleans
