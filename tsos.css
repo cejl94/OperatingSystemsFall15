@@ -48,16 +48,18 @@ h3 {
 
 }
 
+/*
 #coreMemoryTable{
-  overflow-x:hidden;
-  overflow-y:auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   background-color: white;
   color: black;
   border:1px solid blue;
-  width: 400px;
-  height: 250px;
+
 
 }
+*/
+
 
 #cpuTable{
   border:1px solid green;
@@ -76,4 +78,12 @@ h3 {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 8pt;
   text-align: center;
+}
+
+#coreMemory{
+  overflow-x: hidden;
+  overflow-y: auto;
+  height:250px;
+  width: 400px;"
+
 }

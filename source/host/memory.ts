@@ -16,8 +16,9 @@ module TSOS {
 
 
         // initalize the length to 256
+        // as stated in lab 5, increase memory to 768
         public init():void {
-             for (var i = 0; i < 256; i++){
+             for (var i = 0; i < 768; i++){
                  this.opcodeMemory[i] = "00";
                              }
 

@@ -45,7 +45,10 @@ var _StdOut;
 // UI
 var _Console;
 var _OsShell;
+//Process Control Block/Program stuff
 var pid = 0;
+var quantum = 6;
+var residentList = [];
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode = false;
 //secret message booleans

@@ -131,9 +131,9 @@ var TSOS;
             // page from its cache, which is not what we want.
         };
         Control.createMemoryTable = function () {
-            //32 rows(256/8) = 32
+            //32 rows(768/8) = 96
             //9 columns incleading a header
-            for (var x = 0; x < 32; x++) {
+            for (var x = 0; x < 96; x++) {
                 var row = coreMemoryTable.insertRow(x);
                 for (var y = 0; y < 9; y++) {
                     var cell = row.insertCell(y);
@@ -151,10 +151,10 @@ var TSOS;
             //this will grab the opCode sitting in memory
             var counter = 0;
             //pretty much the same thing as initialize, just with different values
-            for (var x = 0; x < 32; x++) {
-                var row = coreMemoryTable.insertRow(x);
+            for (var x = 0; x < 96; x++) {
+                var rows = coreMemoryTable.rows[x];
                 for (var y = 0; y < 9; y++) {
-                    var cell = row.insertCell(y);
+                    var cell = rows.cells[y];
                     if (y == 0) {
                         var header = (x * 8).toString(16);
                         cell.innerHTML = "0x" + header;

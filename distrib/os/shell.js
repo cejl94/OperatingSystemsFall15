@@ -73,7 +73,11 @@ var TSOS;
             sc = new TSOS.ShellCommand(this.shellRun, "run", "<number>- Executes the program with the given pid");
             this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
+            sc = new TSOS.ShellCommand(this.shellRun, "ps", "- list the running processes and their IDs");
+            this.commandList[this.commandList.length] = sc;
             // kill <id> - kills the specified process id.
+            sc = new TSOS.ShellCommand(this.shellRun, "kill", "<number>- Kills the program with the given pid");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -372,13 +376,8 @@ var TSOS;
                 }
             }
             if (counter == toArray.length) {
-                _StdOut.putText("All digits are good.");
                 var instructions = toArray.replace(/[\s]/g, "");
                 memManager.loadInputToMemory(instructions);
-                prosBlock = new TSOS.pcb();
-                prosBlock.init(pid);
-                _StdOut.putText("Program successfully loaded, pid = " + prosBlock.pid);
-                TSOS.Control.updateMemoryTable();
             }
             else {
                 _StdOut.putText("You have entered an incorrect digit.");
@@ -393,10 +392,9 @@ var TSOS;
             if (parseInt(args) == pid) {
                 _CPU.PC = 0;
                 _CPU.isExecuting = true;
-                pid++;
             }
             else {
-                _StdOut.putText("This is not a valid pid, please enter the correct pid");
+                _StdOut.putText("This is not a valid pid, please enter a correct pid");
             }
         };
         return Shell;

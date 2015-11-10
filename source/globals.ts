@@ -57,7 +57,11 @@ var _StdOut;
 var _Console: TSOS.Console;
 var _OsShell: TSOS.Shell;
 
+//Process Control Block/Program stuff
 var pid: number = 0;
+var quantum: number = 6;
+var residentList = [];
+
 
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode: boolean = false;

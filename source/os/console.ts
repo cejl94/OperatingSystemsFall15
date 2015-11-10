@@ -49,7 +49,18 @@ module TSOS {
 
         }
 
-        private tabComplete(): void{
+        private lineWrapCanvas():void{
+            if(this.currentYPosition > _Canvas.width){
+                //copy the stuff on the line past the width
+                //advance the line
+                //paste it
+
+
+            }
+
+        }
+
+        /*private tabComplete(): void{
 
             var goodBuffer = this.buffer.replace(/[\t]/g, "");
             _Kernel.krnTrace("buffer is: " + goodBuffer+".");
@@ -96,7 +107,7 @@ module TSOS {
 
             this.matchArray = [];
 
-        }
+        }*/
 
         public backspace(): void{
             //split the buffer into a character array
@@ -199,7 +210,7 @@ module TSOS {
                 // Logic and implementation of tab complete
                 if(chr === String.fromCharCode(9)) {
 
-                    this.tabComplete();
+                    //this.tabComplete();
 
                 }
 

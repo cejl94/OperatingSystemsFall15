@@ -10,8 +10,9 @@ var TSOS;
             this.opcodeMemory = opcodeMemory;
         }
         // initalize the length to 256
+        // as stated in lab 5, increase memory to 768
         memory.prototype.init = function () {
-            for (var i = 0; i < 256; i++) {
+            for (var i = 0; i < 768; i++) {
                 this.opcodeMemory[i] = "00";
             }
         };

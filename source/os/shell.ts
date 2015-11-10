@@ -125,7 +125,28 @@ module TSOS {
             this.commandList[this.commandList.length] = sc;
 
             // ps  - list the running processes and their IDs
+            sc = new ShellCommand(this.shellRun,
+                "ps",
+                "- list the running processes and their IDs");
+            this.commandList[this.commandList.length] = sc;
+
             // kill <id> - kills the specified process id.
+            sc = new ShellCommand(this.shellRun,
+                "kill",
+                "<number>- Kills the program with the given pid");
+            this.commandList[this.commandList.length] = sc;
+
+            // clearmem
+            sc = new ShellCommand(this.shellClearMem,
+                "clearmem",
+                "- restores memory to its default setting");
+            this.commandList[this.commandList.length] = sc;
+
+            // quantum <number>
+            sc = new ShellCommand(this.shellQuantum,
+                "quantum",
+                "<number>- Sets the quantum to the number input");
+            this.commandList[this.commandList.length] = sc;
 
             //
             // Display the initial prompt.
@@ -446,13 +467,13 @@ module TSOS {
 
             }
                 if(counter == toArray.length){
-                    _StdOut.putText("All digits are good.");
+
                     var instructions = toArray.replace(/[\s]/g, "");
                         memManager.loadInputToMemory(instructions);
-                    prosBlock = new pcb();
-                    prosBlock.init(pid);
-                    _StdOut.putText("Program successfully loaded, pid = " + prosBlock.pid);
-                    Control.updateMemoryTable();
+
+
+
+
 
 
 
@@ -483,10 +504,11 @@ module TSOS {
             if(parseInt(args) == pid){
                 _CPU.PC = 0;
                 _CPU.isExecuting = true;
-                pid++;
+
+
             }
             else{
-                _StdOut.putText("This is not a valid pid, please enter the correct pid");
+                _StdOut.putText("This is not a valid pid, please enter a correct pid");
             }
 
         }

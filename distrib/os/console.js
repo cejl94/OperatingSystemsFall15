@@ -45,28 +45,43 @@ var TSOS;
                 this.currentYPosition = _Canvas.height - _DefaultFontSize;
             }
         };
-        Console.prototype.tabComplete = function () {
-            var goodBuffer = this.buffer.replace(/[\t]/g, "");
-            _Kernel.krnTrace("buffer is: " + goodBuffer + ".");
-            for (var i = 0; i < _OsShell.commandList.length; i++) {
-                if (_OsShell.commandList[i].command.startsWith(goodBuffer)) {
-                    _Kernel.krnTrace("Command: " + _OsShell.commandList[i].command);
-                    this.matchArray[this.matchArray.length] = _OsShell.commandList[i].command;
-                }
+        Console.prototype.lineWrapCanvas = function () {
+            if (this.currentYPosition > _Canvas.width) {
             }
-            if (this.matchArray.length == 0) {
+        };
+        /*private tabComplete(): void{
+
+            var goodBuffer = this.buffer.replace(/[\t]/g, "");
+            _Kernel.krnTrace("buffer is: " + goodBuffer+".");
+
+            for (var i = 0; i < _OsShell.commandList.length; i++) {
+
+                if (_OsShell.commandList[i].command.startsWith(goodBuffer)) {
+                    _Kernel.krnTrace("Command: " +  _OsShell.commandList[i].command);
+
+                    this.matchArray[this.matchArray.length] = _OsShell.commandList[i].command;
+
+                }
+
+            }
+            if(this.matchArray.length == 0){
                 this.advanceLine();
                 this.putText("There are no commands starting with this letter");
                 this.advanceLine();
                 this.putText(">" + this.buffer.trim());
+
+
             }
-            if (this.matchArray.length == 1) {
+
+            if(this.matchArray.length == 1){
+
                 this.buffer = this.matchArray[0].toString();
                 _DrawingContext.clearRect(0, this.currentYPosition - _DefaultFontSize, this.currentXPosition, _DefaultFontSize + 5);
                 this.currentXPosition = 0;
                 this.putText(">" + this.buffer.trim());
+
             }
-            if (this.matchArray.length > 1) {
+            if(this.matchArray.length > 1){
                 _DrawingContext.clearRect(0, this.currentYPosition - _DefaultFontSize, this.currentXPosition, _DefaultFontSize + 5);
                 this.currentXPosition = 0;
                 this.putText(">" + this.buffer.trim());
@@ -74,9 +89,14 @@ var TSOS;
                 this.putText(this.matchArray.toString());
                 this.advanceLine();
                 this.putText(">" + this.buffer.trim());
+
+
+
             }
+
             this.matchArray = [];
-        };
+
+        }*/
         Console.prototype.backspace = function () {
             //split the buffer into a character array
             var tempBuff = this.buffer.split('');
@@ -172,7 +192,6 @@ var TSOS;
                 var chr = _KernelInputQueue.dequeue();
                 // Logic and implementation of tab complete
                 if (chr === String.fromCharCode(9)) {
-                    this.tabComplete();
                 }
                 // Check to see if it's "special" (enter or ctrl-c) or "normal" (anything else that the keyboard device driver gave us).
                 if (chr === String.fromCharCode(13)) {
