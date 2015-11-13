@@ -56,8 +56,9 @@ export class memoryManager {
                    prosBlock = new pcb();
                    //given that load increases the base and the limit after the load is complete, we must get the previous base and limit
                    prosBlock.init(pid, this.baseReg, this.limitReg, this.counter);
-                   _StdOut.putText("Program successfully loaded, PC = " + prosBlock.PC);
+                   _StdOut.putText("Program successfully loaded, pid = " + prosBlock.pid);
                    _StdOut.advanceLine();
+                   _StdOut.putText("Base = " + prosBlock.base + " Limit = " + prosBlock.limit);
                    //_StdOut.putText("Memory base = " + prosBlock.base + " Memory Limit = " + prosBlock.limit );
                    _Kernel.krnTrace("resident list length" + residentList.length);
 

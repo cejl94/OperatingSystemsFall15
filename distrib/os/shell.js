@@ -419,10 +419,11 @@ var TSOS;
         Shell.prototype.shellRunAll = function (args) {
             //while the resident list contains things, enqueue all of them into the ready Queue
             var counter = 0;
-            while (residentList.length > 0) {
+            for (var i = 0; i < residentList.length; i++) {
                 _StdOut.putText("RLC " + residentList[counter].pid);
                 readyQueue.enqueue(residentList[counter]);
-                _Kernel.krnTrace("ready queue at " + counter + " is " + readyQueue[counter].pid);
+                _Kernel.krnTrace("SIZE OF Q IS " + residentList.length);
+                //_Kernel.krnTrace("ready queue at " + counter + " is " + readyQueue.dequeue().pid);
                 counter++;
             }
             TSOS.cpuScheduler.startExecution();

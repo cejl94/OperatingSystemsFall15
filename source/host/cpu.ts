@@ -168,6 +168,7 @@ module TSOS {
 
                         Control.updateCPUtable();
                         this.updatePCB(_CPU);
+                        processTerminated = true;
                         cpuScheduler.contextSwitch();
 
                         break;

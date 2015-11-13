@@ -82,7 +82,13 @@ var TSOS;
             }
             else if (_CPU.isExecuting) {
                 _CPU.cycle();
+                _Kernel.krnTrace("PROGRAM COUNTER IS" + _CPU.PC);
                 quantumCounter += 1;
+                _Kernel.krnTrace("quantum is " + quantum + " and quantum counter is" + quantumCounter);
+                if (quantumCounter == quantum) {
+                    _Kernel.krnTrace("SWITCHING NOW");
+                    TSOS.cpuScheduler.contextSwitch();
+                }
             }
             else {
                 this.krnTrace("Idle");

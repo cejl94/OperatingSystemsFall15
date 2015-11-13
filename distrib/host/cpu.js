@@ -156,6 +156,7 @@ var TSOS;
                         _StdOut.putText(">");
                         TSOS.Control.updateCPUtable();
                         this.updatePCB(_CPU);
+                        processTerminated = true;
                         TSOS.cpuScheduler.contextSwitch();
                         break;
                     case "EC":

@@ -19,24 +19,30 @@ var TSOS;
         };
         //method to switch process control blocks
         // if the counter in CPU reaches the quantum,
-        // switch PCBS, which means
+        // switch PCBS. also, if a 00 is reached, switch PCBs
         cpuScheduler.contextSwitch = function () {
             if (quantumCounter == quantum) {
-                if (readyQueue.length > 0) {
+                if (readyQueue != null) {
+                    _Kernel.krnTrace("ACTUALLY INSIDE THE METHOD NOW");
                     currentlyExecuting.state = 0;
                     _CPU.updatePCB(_CPU);
                     readyQueue.enqueue(currentlyExecuting);
                     currentlyExecuting = readyQueue.dequeue();
                     currentlyExecuting.state = 1;
+                    _CPU.updateCPU(currentlyExecuting);
                     quantumCounter = 0;
+                    _Kernel.krnTrace("Q EQUALS" + readyQueue.toString());
                 }
             }
             //this occurs when a 00 is encountered, and therefore a process is finished
-            if (readyQueue.length > 0) {
+            if (processTerminated && readyQueue != null) {
                 _CPU.updatePCB(_CPU);
                 currentlyExecuting.state = 2;
                 finishedProcesses[finishedProcesses.length] = currentlyExecuting;
                 currentlyExecuting = readyQueue.dequeue();
+                _CPU.updateCPU(currentlyExecuting);
+                processTerminated = false;
+                _Kernel.krnTrace("Q EQUALS (00 occured)" + readyQueue.toString());
             }
         };
         return cpuScheduler;
