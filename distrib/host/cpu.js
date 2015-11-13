@@ -224,7 +224,7 @@ var TSOS;
                             // this gets the position in memory of the first asciicharacter
                             var place = this.Yreg;
                             while (mem.opcodeMemory[place + currentlyExecuting.base] != "00") {
-                                _Kernel.krnTrace("printing " + String.fromCharCode(parseInt(mem.opcodeMemory[place], 16)));
+                                //_Kernel.krnTrace("printing " + String.fromCharCode(parseInt(mem.opcodeMemory[place],16)));
                                 var ascii = String.fromCharCode(parseInt(mem.opcodeMemory[place + currentlyExecuting.base], 16));
                                 _StdOut.putText(ascii);
                                 place++;

@@ -63,7 +63,7 @@ var pid: number = 0;
 var quantum: number = 6;
 var quantumCounter: number = 0;
 var residentList = [];
-var readyQueue: any = null;
+var readyQueue;
 var finishedProcesses = [];
 var currentlyExecuting;
 //var processTerminated: boolean = false;

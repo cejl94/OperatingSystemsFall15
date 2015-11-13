@@ -34,14 +34,26 @@ var TSOS;
             }
         };
         cpuScheduler.contextSwitchBreak = function () {
-            _Kernel.krnTrace("This is running");
-            while (readyQueue.length > 0) {
-                _Kernel.krnTrace("LENGTH IS" + readyQueue.size);
-                _CPU.updatePCB(_CPU);
+            _Kernel.krnTrace("READY Q SIZE IS" + readyQueue.getSize());
+            if (readyQueue.getSize() >= 0) {
+                _Kernel.krnTrace("LENGTH IS" + readyQueue.getSize());
+                //_CPU.updatePCB(_CPU);
                 currentlyExecuting.state = 2;
                 currentlyExecuting = readyQueue.dequeue();
-                _CPU.updateCPU(currentlyExecuting);
-                _Kernel.krnTrace("A BREAK HAS OCCURED" + readyQueue.toString());
+                if (currentlyExecuting == null) {
+                    _CPU.isExecuting = false;
+                    _StdOut.advanceLine();
+                    _StdOut.putText("The program has finished running");
+                    _StdOut.advanceLine();
+                    _StdOut.putText(">");
+                }
+                else {
+                    _CPU.updateCPU(currentlyExecuting);
+                }
+                //_Kernel.krnTrace("A BREAK HAS OCCURED" + readyQueue.toString());
+                if (currentlyExecuting == null) {
+                    _CPU.isExecuting = false;
+                }
             }
             /*if(readyQueue.length == 0){
                 _StdOut.putText(" READY Q IS Empty")
