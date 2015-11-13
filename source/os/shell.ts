@@ -124,14 +124,20 @@ module TSOS {
                 "<number>- Executes the program with the given pid");
             this.commandList[this.commandList.length] = sc;
 
+            //Runall
+            sc = new ShellCommand(this.shellRunAll,
+                "runall",
+                "- Executes all loaded user programs");
+            this.commandList[this.commandList.length] = sc;
+
             // ps  - list the running processes and their IDs
-            sc = new ShellCommand(this.shellRun,
+            sc = new ShellCommand(this.shellPS,
                 "ps",
                 "- list the running processes and their IDs");
             this.commandList[this.commandList.length] = sc;
 
             // kill <id> - kills the specified process id.
-            sc = new ShellCommand(this.shellRun,
+            sc = new ShellCommand(this.shellKill,
                 "kill",
                 "<number>- Kills the program with the given pid");
             this.commandList[this.commandList.length] = sc;
@@ -344,6 +350,17 @@ module TSOS {
                         break;
                     case"run":
                         _StdOut.putText("Run executes a user program with the sepcified pid.");
+                    case"runall":
+                        _StdOut.putText("Runall executes all loaded user programs.");
+                    case"clearmem":
+                        _StdOut.putText("Clearmem clears the memory entirely.");
+                    case"quantum":
+                        _StdOut.putText("Quantum sets the quantum to the number entered.");
+                    case"ps":
+                        _StdOut.putText("Ps displays all process ids currently running.");
+                    case"kill":
+                        _StdOut.putText("Kill terminates the program withe the pid entered");
+
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -510,6 +527,48 @@ module TSOS {
             else{
                 _StdOut.putText("This is not a valid pid, please enter a correct pid");
             }
+
+        }
+
+        public shellRunAll(args){
+
+            //while the resident list contains things, enqueue all of them into the ready Queue
+            var counter = 0;
+            while(residentList.length > 0){
+                _StdOut.putText("RLC " + residentList[counter].pid);
+                readyQueue.enqueue(residentList[counter]);
+                _Kernel.krnTrace("ready queue at " + counter + " is " + readyQueue[counter].pid);
+                counter++;
+
+            }
+            cpuScheduler.startExecution();
+
+
+        }
+
+        public shellClearMem(args){
+
+            memManager.clearMemory();
+            _StdOut.putText("Memory has been cleared");
+            // also gotta clear resident list and ready queue
+        }
+
+        public shellQuantum(args){
+
+            _StdOut.putText("Quantum has been set to " + args);
+            quantum = args;
+        }
+
+        public shellPS(args){
+            //loop through ready queue and std out the PIDs
+            for(var i = 0; i < readyQueue.length; i++){
+                _StdOut.putText(readyQueue[i].pid+ " ");
+            }
+
+        }
+
+        public shellKill(args){
+            //kill a process with the entered pid,
 
         }
 

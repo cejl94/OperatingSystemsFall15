@@ -28,6 +28,7 @@ const KEYBOARD_IRQ: number = 1;
 var _CPU: TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
 var mem: TSOS.memory;
 var memManager: TSOS.memoryManager;
+var cpuScheduler: TSOS.cpuScheduler;
 var coreMemoryTable: HTMLTableElement;
 var cpuTable: HTMLTableElement;
 var prosBlock: TSOS.pcb;
@@ -60,7 +61,11 @@ var _OsShell: TSOS.Shell;
 //Process Control Block/Program stuff
 var pid: number = 0;
 var quantum: number = 6;
+var quantumCounter: number = 0;
 var residentList = [];
+var readyQueue: any = null;
+var finishedProcesses = [];
+var currentlyExecuting;
 
 
 // At least this OS is not trying to kill you. (Yet.)

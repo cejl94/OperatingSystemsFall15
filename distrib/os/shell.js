@@ -72,11 +72,20 @@ var TSOS;
             //Run
             sc = new TSOS.ShellCommand(this.shellRun, "run", "<number>- Executes the program with the given pid");
             this.commandList[this.commandList.length] = sc;
+            //Runall
+            sc = new TSOS.ShellCommand(this.shellRunAll, "runall", "- Executes all loaded user programs");
+            this.commandList[this.commandList.length] = sc;
             // ps  - list the running processes and their IDs
-            sc = new TSOS.ShellCommand(this.shellRun, "ps", "- list the running processes and their IDs");
+            sc = new TSOS.ShellCommand(this.shellPS, "ps", "- list the running processes and their IDs");
             this.commandList[this.commandList.length] = sc;
             // kill <id> - kills the specified process id.
-            sc = new TSOS.ShellCommand(this.shellRun, "kill", "<number>- Kills the program with the given pid");
+            sc = new TSOS.ShellCommand(this.shellKill, "kill", "<number>- Kills the program with the given pid");
+            this.commandList[this.commandList.length] = sc;
+            // clearmem
+            sc = new TSOS.ShellCommand(this.shellClearMem, "clearmem", "- restores memory to its default setting");
+            this.commandList[this.commandList.length] = sc;
+            // quantum <number>
+            sc = new TSOS.ShellCommand(this.shellQuantum, "quantum", "<number>- Sets the quantum to the number input");
             this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
@@ -263,6 +272,16 @@ var TSOS;
                         break;
                     case "run":
                         _StdOut.putText("Run executes a user program with the sepcified pid.");
+                    case "runall":
+                        _StdOut.putText("Runall executes all loaded user programs.");
+                    case "clearmem":
+                        _StdOut.putText("Clearmem clears the memory entirely.");
+                    case "quantum":
+                        _StdOut.putText("Quantum sets the quantum to the number entered.");
+                    case "ps":
+                        _StdOut.putText("Ps displays all process ids currently running.");
+                    case "kill":
+                        _StdOut.putText("Kill terminates the program withe the pid entered");
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -396,6 +415,35 @@ var TSOS;
             else {
                 _StdOut.putText("This is not a valid pid, please enter a correct pid");
             }
+        };
+        Shell.prototype.shellRunAll = function (args) {
+            //while the resident list contains things, enqueue all of them into the ready Queue
+            var counter = 0;
+            while (residentList.length > 0) {
+                _StdOut.putText("RLC " + residentList[counter].pid);
+                readyQueue.enqueue(residentList[counter]);
+                _Kernel.krnTrace("ready queue at " + counter + " is " + readyQueue[counter].pid);
+                counter++;
+            }
+            TSOS.cpuScheduler.startExecution();
+        };
+        Shell.prototype.shellClearMem = function (args) {
+            memManager.clearMemory();
+            _StdOut.putText("Memory has been cleared");
+            // also gotta clear resident list and ready queue
+        };
+        Shell.prototype.shellQuantum = function (args) {
+            _StdOut.putText("Quantum has been set to " + args);
+            quantum = args;
+        };
+        Shell.prototype.shellPS = function (args) {
+            //loop through ready queue and std out the PIDs
+            for (var i = 0; i < readyQueue.length; i++) {
+                _StdOut.putText(readyQueue[i].pid + " ");
+            }
+        };
+        Shell.prototype.shellKill = function (args) {
+            //kill a process with the entered pid,
         };
         return Shell;
     })();

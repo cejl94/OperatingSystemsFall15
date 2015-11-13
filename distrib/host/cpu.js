@@ -38,6 +38,21 @@ var TSOS;
             this.Zflag = 0;
             this.isExecuting = false;
         };
+        //update the CPU with the contents of the process control block that is about to be executing
+        Cpu.prototype.updateCPU = function (currentlyExecuting) {
+            this.PC = currentlyExecuting.PC;
+            this.Acc = currentlyExecuting.PC;
+            this.Xreg = currentlyExecuting.Xreg;
+            this.Yreg = currentlyExecuting.Yreg;
+            this.Zflag = currentlyExecuting.Zflag;
+        };
+        Cpu.prototype.updatePCB = function (mainCPU) {
+            currentlyExecuting.PC = this.PC;
+            currentlyExecuting.Acc = this.Acc;
+            currentlyExecuting.Xreg = this.Xreg;
+            currentlyExecuting.Yreg = this.Yreg;
+            currentlyExecuting.Zflag = this.Zflag;
+        };
         Cpu.prototype.cycle = function () {
             _Kernel.krnTrace('CPU cycle');
             // TODO: Accumulate CPU usage and profiling statistics here.
@@ -60,7 +75,7 @@ var TSOS;
                         // accumulator
                         var swap = memManager.readCodeInMemory(this.PC + 2) + memManager.readCodeInMemory(this.PC + 1);
                         var num = parseInt(swap, 16);
-                        var stringThis = mem.opcodeMemory[num];
+                        var stringThis = mem.opcodeMemory[num + currentlyExecuting.base];
                         this.Acc = parseInt(stringThis, 16);
                         this.PC += 3;
                         _Kernel.krnTrace("The loaded accumulator value is " + this.Acc);
@@ -73,7 +88,7 @@ var TSOS;
                         var valueToStore = this.Acc.toString(16);
                         var swap = memManager.readCodeInMemory(this.PC + 2) + memManager.readCodeInMemory(this.PC + 1);
                         var num = parseInt(swap, 16);
-                        mem.opcodeMemory[num] = valueToStore;
+                        mem.opcodeMemory[num + currentlyExecuting.base] = valueToStore;
                         this.PC += 3;
                         _Kernel.krnTrace("The stored accumulator value is " + this.Acc);
                         TSOS.Control.updateCPUtable();
@@ -82,7 +97,7 @@ var TSOS;
                         // Load a value from memory, and add it to the accumulator
                         var swap = memManager.readCodeInMemory(this.PC + 2) + memManager.readCodeInMemory(this.PC + 1);
                         var num = parseInt(swap, 16);
-                        var toAdd = mem.opcodeMemory[num];
+                        var toAdd = mem.opcodeMemory[num + currentlyExecuting.base];
                         var toAddNum = parseInt(toAdd, 16);
                         this.Acc = this.Acc + toAddNum;
                         this.PC += 3;
@@ -102,7 +117,7 @@ var TSOS;
                         // Load a value from memory into the X register
                         var swap = memManager.readCodeInMemory(this.PC + 2) + memManager.readCodeInMemory(this.PC + 1);
                         var num = parseInt(swap, 16);
-                        var stringThis = mem.opcodeMemory[num];
+                        var stringThis = mem.opcodeMemory[num + currentlyExecuting.base];
                         this.Xreg = parseInt(stringThis, 16);
                         this.PC += 3;
                         _Kernel.krnTrace("The loaded X register value is " + this.Xreg);
@@ -121,7 +136,7 @@ var TSOS;
                         // Load a value from memory into the Y register
                         var swap = memManager.readCodeInMemory(this.PC + 2) + memManager.readCodeInMemory(this.PC + 1);
                         var num = parseInt(swap, 16);
-                        var stringThis = mem.opcodeMemory[num];
+                        var stringThis = mem.opcodeMemory[num + currentlyExecuting.base];
                         this.Yreg = parseInt(stringThis, 16);
                         this.PC += 3;
                         _Kernel.krnTrace("The loaded Y register value is " + this.Yreg);
@@ -133,24 +148,22 @@ var TSOS;
                         break;
                     case "00":
                         // If this opcode is seen, stop executing the program, and place the prompt character back
+                        // must check if there is still things in the ready queue before setting this.isexecuting to false
                         this.isExecuting = false;
                         _StdOut.advanceLine();
                         _StdOut.putText("The program has finished running");
                         _StdOut.advanceLine();
                         _StdOut.putText(">");
                         TSOS.Control.updateCPUtable();
-                        prosBlock.PC = this.PC;
-                        prosBlock.Acc = this.Acc;
-                        prosBlock.Xreg = this.Xreg;
-                        prosBlock.Yreg = this.Yreg;
-                        prosBlock.Zflag = this.Zflag;
+                        this.updatePCB(_CPU);
+                        TSOS.cpuScheduler.contextSwitch();
                         break;
                     case "EC":
                         // Compare the value of an address in memory to the X register
                         // If they match, Zflag = 1, else Zflag = 0;
                         var swap = memManager.readCodeInMemory(this.PC + 2) + memManager.readCodeInMemory(this.PC + 1);
                         var num = parseInt(swap, 16);
-                        var stringThis = mem.opcodeMemory[num];
+                        var stringThis = mem.opcodeMemory[num + currentlyExecuting.base];
                         var toCompare = parseInt(stringThis, 16);
                         _Kernel.krnTrace("Is " + toCompare + " going to equal " + this.Xreg);
                         if (this.Xreg == toCompare) {
@@ -192,13 +205,13 @@ var TSOS;
                         // Grab a value from an address in memory and add one to it, then put it back in memory
                         var swap = memManager.readCodeInMemory(this.PC + 2) + memManager.readCodeInMemory(this.PC + 1);
                         var num = parseInt(swap, 16);
-                        var stringThis = mem.opcodeMemory[num];
+                        var stringThis = mem.opcodeMemory[num + currentlyExecuting.base];
                         var toIncrement = parseInt(stringThis, 16);
                         toIncrement += 1;
                         var placeBack = toIncrement.toString(16);
-                        mem.opcodeMemory[num] = placeBack;
+                        mem.opcodeMemory[num + currentlyExecuting.base] = placeBack;
                         this.PC += 3;
-                        _Kernel.krnTrace("the byte is now " + parseInt(mem.opcodeMemory[num], 16));
+                        _Kernel.krnTrace("the byte is now " + parseInt(mem.opcodeMemory[num + currentlyExecuting.base], 16));
                         break;
                     case "FF":
                         // If Xreg is 1, print out the Y register
@@ -211,7 +224,7 @@ var TSOS;
                         if (this.Xreg == 2) {
                             // this gets the position in memory of the first asciicharacter
                             var place = this.Yreg;
-                            while (mem.opcodeMemory[place] != "00") {
+                            while (mem.opcodeMemory[place + currentlyExecuting.base] != "00") {
                                 _Kernel.krnTrace("printing " + String.fromCharCode(parseInt(mem.opcodeMemory[place], 16)));
                                 var ascii = String.fromCharCode(parseInt(mem.opcodeMemory[place], 16));
                                 _StdOut.putText(ascii);

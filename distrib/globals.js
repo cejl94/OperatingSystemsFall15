@@ -23,6 +23,7 @@ var KEYBOARD_IRQ = 1;
 var _CPU; // Utilize TypeScript's type annotation system to ensure that _CPU is an instance of the Cpu class.
 var mem;
 var memManager;
+var cpuScheduler;
 var coreMemoryTable;
 var cpuTable;
 var prosBlock;
@@ -48,7 +49,11 @@ var _OsShell;
 //Process Control Block/Program stuff
 var pid = 0;
 var quantum = 6;
+var quantumCounter = 0;
 var residentList = [];
+var readyQueue = null;
+var finishedProcesses = [];
+var currentlyExecuting;
 // At least this OS is not trying to kill you. (Yet.)
 var _SarcasticMode = false;
 //secret message booleans

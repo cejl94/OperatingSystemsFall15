@@ -9,7 +9,7 @@ var TSOS;
         }
         // this method will actually load the user input into memory
         memoryManager.prototype.loadInputToMemory = function (instructions) {
-            _StdOut.putText("memoryplace LOoaded, pid = " + this.memoryPlace);
+            //_StdOut.putText("memoryplace LOoaded, pid = " + this.memoryPlace);
             // has the program that was loaded into memory breached its respective bounds?
             // for now check after its been added in, if it did breach into the next block of memory, clear the memory
             //
@@ -32,22 +32,23 @@ var TSOS;
                     }
                     prosBlock = new TSOS.pcb();
                     //given that load increases the base and the limit after the load is complete, we must get the previous base and limit
-                    prosBlock.init(pid, this.baseReg, this.limitReg);
-                    _StdOut.putText("Program successfully loaded, pid = " + prosBlock.pid);
+                    prosBlock.init(pid, this.baseReg, this.limitReg, this.counter);
+                    _StdOut.putText("Program successfully loaded, PC = " + prosBlock.PC);
                     _StdOut.advanceLine();
                     //_StdOut.putText("Memory base = " + prosBlock.base + " Memory Limit = " + prosBlock.limit );
                     _Kernel.krnTrace("resident list length" + residentList.length);
-                    residentList[residentList.length] = prosBlock;
+                    residentList.push(prosBlock);
                     _Kernel.krnTrace("resident list pid = " + residentList[residentList.length - 1].pid);
+                    _Kernel.krnTrace("resident list PC = " + residentList[residentList.length - 1].PC);
                     pid++;
                     TSOS.Control.updateMemoryTable();
                     // after each load, set the new base equal to what it should be for the next block (limit + 1)
                     // same for limit - increase the limitReg by 256.
                     // upon next call to load, program will be loaded in the correct spots
+                    this.counter = this.limitReg + 1;
                     this.baseReg = this.limitReg + 1;
                     this.limitReg = this.limitReg + 256;
                     this.memoryPlace = this.baseReg;
-                    _StdOut.putText("memoryplace oaded, pid = " + this.memoryPlace);
                 }
             }
         };

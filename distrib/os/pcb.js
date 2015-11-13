@@ -4,7 +4,11 @@
 var TSOS;
 (function (TSOS) {
     var pcb = (function () {
-        function pcb(pid, PC, Acc, Xreg, Yreg, Zflag, base, limit, isExecuting) {
+        //if state is 0, the process is waiting(back in the ready queue)
+        //if state is 1 that means the program is executing
+        //if state is 2 that means the program is finished
+        function pcb(state, pid, PC, Acc, Xreg, Yreg, Zflag, base, limit, isExecuting) {
+            if (state === void 0) { state = 0; }
             if (pid === void 0) { pid = 0; }
             if (PC === void 0) { PC = 0; }
             if (Acc === void 0) { Acc = 0; }
@@ -14,6 +18,7 @@ var TSOS;
             if (base === void 0) { base = 0; }
             if (limit === void 0) { limit = 0; }
             if (isExecuting === void 0) { isExecuting = false; }
+            this.state = state;
             this.pid = pid;
             this.PC = PC;
             this.Acc = Acc;
@@ -24,9 +29,10 @@ var TSOS;
             this.limit = limit;
             this.isExecuting = isExecuting;
         }
-        pcb.prototype.init = function (pid, base, limit) {
+        pcb.prototype.init = function (pid, base, limit, PC) {
+            this.state = 0;
             this.pid = pid;
-            this.PC = 0;
+            this.PC = PC;
             this.Acc = 0;
             this.Xreg = 0;
             this.Yreg = 0;

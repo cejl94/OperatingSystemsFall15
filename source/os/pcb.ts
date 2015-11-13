@@ -6,8 +6,11 @@ module TSOS {
     export class pcb {
 
 
-
-        constructor(public pid: number = 0,
+        //if state is 0, the process is waiting(back in the ready queue)
+        //if state is 1 that means the program is executing
+        //if state is 2 that means the program is finished
+        constructor(public state = 0,
+                    public pid: number = 0,
                     public PC: number = 0,
                     public Acc: number = 0,
                     public Xreg: number = 0,
@@ -19,9 +22,10 @@ module TSOS {
 
         }
 
-        public init(pid, base, limit): void {
+        public init(pid, base, limit, PC): void {
+            this.state = 0;
             this.pid = pid;
-            this.PC = 0;
+            this.PC = PC;
             this.Acc = 0;
             this.Xreg = 0;
             this.Yreg = 0;
