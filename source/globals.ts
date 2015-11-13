@@ -66,7 +66,7 @@ var residentList = [];
 var readyQueue: any = null;
 var finishedProcesses = [];
 var currentlyExecuting;
-var processTerminated: boolean = false;
+//var processTerminated: boolean = false;
 
 
 // At least this OS is not trying to kill you. (Yet.)

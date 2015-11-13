@@ -63,6 +63,10 @@ module TSOS {
         public cycle(): void {
             _Kernel.krnTrace('CPU cycle');
 
+            //if(readyQueue.isEmpty()){
+            //    this.isExecuting = false;
+            //}
+
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             if(this.isExecuting) {
@@ -74,7 +78,7 @@ module TSOS {
                         var num = parseInt(next, 16);
                         this.Acc = num;
                         this.PC += 2;
-                        _Kernel.krnTrace("The accumulator value is " + this.Acc);
+                        //_Kernel.krnTrace("The accumulator value is " + this.Acc);
                         Control.updateCPUtable();
 
                         break;
@@ -88,7 +92,7 @@ module TSOS {
                         var stringThis = mem.opcodeMemory[num+ currentlyExecuting.base];
                         this.Acc = parseInt(stringThis, 16);
                         this.PC += 3;
-                        _Kernel.krnTrace("The loaded accumulator value is " + this.Acc);
+                       // _Kernel.krnTrace("The loaded accumulator value is " + this.Acc);
                         Control.updateCPUtable();
                         break;
                     case "8D":
@@ -101,7 +105,7 @@ module TSOS {
                         var num = parseInt(swap, 16);
                         mem.opcodeMemory[num + currentlyExecuting.base] = valueToStore;
                         this.PC += 3;
-                        _Kernel.krnTrace("The stored accumulator value is " + this.Acc);
+                       // _Kernel.krnTrace("The stored accumulator value is " + this.Acc);
                         Control.updateCPUtable();
                         break;
                     case "6D":
@@ -112,7 +116,7 @@ module TSOS {
                         var toAddNum = parseInt(toAdd, 16);
                         this.Acc = this.Acc + toAddNum;
                         this.PC += 3;
-                        _Kernel.krnTrace("The added carry accumulator value is " + this.Acc);
+                       // _Kernel.krnTrace("The added carry accumulator value is " + this.Acc);
                         Control.updateCPUtable();
                         break;
                     case "A2":
@@ -121,7 +125,7 @@ module TSOS {
                         var num = parseInt(next, 16);
                         this.Xreg = num;
                         this.PC += 2;
-                        _Kernel.krnTrace("The X register value is " + this.Xreg);
+                       // _Kernel.krnTrace("The X register value is " + this.Xreg);
                         Control.updateCPUtable();
                         break;
                     case "AE":
@@ -131,7 +135,7 @@ module TSOS {
                         var stringThis = mem.opcodeMemory[num + currentlyExecuting.base];
                         this.Xreg = parseInt(stringThis, 16);
                         this.PC += 3;
-                        _Kernel.krnTrace("The loaded X register value is " + this.Xreg);
+                        //_Kernel.krnTrace("The loaded X register value is " + this.Xreg);
                         Control.updateCPUtable();
                         break;
                     case "A0":
@@ -140,7 +144,7 @@ module TSOS {
                         var num = parseInt(next, 16);
                         this.Yreg = num;
                         this.PC += 2;
-                        _Kernel.krnTrace("The Y register value is " + this.Yreg);
+                        //_Kernel.krnTrace("The Y register value is " + this.Yreg);
                         Control.updateCPUtable();
                         break;
                     case "AC":
@@ -150,7 +154,7 @@ module TSOS {
                         var stringThis = mem.opcodeMemory[num + currentlyExecuting.base];
                         this.Yreg = parseInt(stringThis, 16);
                         this.PC += 3;
-                        _Kernel.krnTrace("The loaded Y register value is " + this.Yreg);
+                        //_Kernel.krnTrace("The loaded Y register value is " + this.Yreg);
                         Control.updateCPUtable();
                         break;
                     case "EA":
@@ -158,18 +162,14 @@ module TSOS {
                         this.PC++;
                         break;
                     case "00":
-                        // If this opcode is seen, stop executing the program, and place the prompt character back
-                        // must check if there is still things in the ready queue before setting this.isexecuting to false
-                            this.isExecuting = false;
-                             _StdOut.advanceLine();
-                            _StdOut.putText("The program has finished running");
-                             _StdOut.advanceLine();
-                            _StdOut.putText(">");
+                        //if this opcode is seen, we want to update the currently executing PCB with the
+                        //content of the CPU
+                        //then we want to switch to the next process, and NOT enqueue this process again
 
                         Control.updateCPUtable();
                         this.updatePCB(_CPU);
-                        processTerminated = true;
-                        cpuScheduler.contextSwitch();
+                        //processTerminated = true;
+                        cpuScheduler.contextSwitchBreak();
 
                         break;
                     case "EC":
@@ -179,7 +179,7 @@ module TSOS {
                         var num = parseInt(swap, 16);
                         var stringThis = mem.opcodeMemory[num + currentlyExecuting.base];
                         var toCompare = parseInt(stringThis, 16);
-                        _Kernel.krnTrace("Is " + toCompare + " going to equal " + this.Xreg);
+                        //_Kernel.krnTrace("Is " + toCompare + " going to equal " + this.Xreg);
                         if (this.Xreg == toCompare) {
                             this.Zflag = 1;
 
@@ -191,28 +191,28 @@ module TSOS {
                             this.PC += 3;
                         }
 
-                        _Kernel.krnTrace(" the z flag is now " + this.Zflag);
+                        //_Kernel.krnTrace(" the z flag is now " + this.Zflag);
                         Control.updateCPUtable();
 
                         break;
                     case "D0":
                         // This is a BNE code, jumps back to the correct place in memory to loop
-                        _Kernel.krnTrace("ok so here we PRORPEOgo, PC is " + this.PC);
+                        //_Kernel.krnTrace("ok so here we PRORPEOgo, PC is " + this.PC);
                         ++this.PC;
                         var swap = memManager.readCodeInMemory(this.PC);
                         var num = parseInt(swap, 16);
                         if(this.Zflag == 0){
-                            _Kernel.krnTrace("ok so here we go, PC is " + this.PC);
+                           // _Kernel.krnTrace("ok so here we go, PC is " + this.PC);
                             var jump = this.PC + num;
-                            _Kernel.krnTrace("the jump variable is " + jump.toString());
+                           // _Kernel.krnTrace("the jump variable is " + jump.toString());
                             if(jump > 255){
                                 this.PC = jump -255;
 
                             }
                             else{
-                                _Kernel.krnTrace("ok so MAYBE WE GOT IT here we go, PC is " + this.PC);
+                                //_Kernel.krnTrace("ok so MAYBE WE GOT IT here we go, PC is " + this.PC);
                                 this.PC = jump + 1;
-                                _Kernel.krnTrace("ok so MAYBE WE GOT IT AFTERWARDS here we go, PC is " + this.PC);
+                                //_Kernel.krnTrace("ok so MAYBE WE GOT IT AFTERWARDS here we go, PC is " + this.PC);
 
                             }
 
@@ -234,12 +234,12 @@ module TSOS {
                         var placeBack = toIncrement.toString(16);
                         mem.opcodeMemory[num + currentlyExecuting.base] = placeBack;
                         this.PC += 3;
-                        _Kernel.krnTrace("the byte is now " + parseInt(mem.opcodeMemory[num + currentlyExecuting.base], 16));
+                        //_Kernel.krnTrace("the byte is now " + parseInt(mem.opcodeMemory[num + currentlyExecuting.base], 16));
                         break;
                     case "FF":
                         // If Xreg is 1, print out the Y register
                         if (this.Xreg == 1) {
-                            _Kernel.krnTrace("printing " + this.Yreg.toString());
+                           // _Kernel.krnTrace("printing " + this.Yreg.toString());
                             _StdOut.putText(this.Yreg.toString());
                             this.PC++;
 
@@ -250,7 +250,7 @@ module TSOS {
                             var place = this.Yreg;
                             while(mem.opcodeMemory[place + currentlyExecuting.base] != "00"){
                                 _Kernel.krnTrace("printing " + String.fromCharCode(parseInt(mem.opcodeMemory[place],16)));
-                                var ascii = String.fromCharCode(parseInt(mem.opcodeMemory[place],16))
+                                var ascii = String.fromCharCode(parseInt(mem.opcodeMemory[place + currentlyExecuting.base],16));
                                 _StdOut.putText(ascii);
                                 place++;
 

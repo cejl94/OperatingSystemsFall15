@@ -103,6 +103,14 @@ export class memoryManager {
                 //must also empty resident list and ready queue
 
             }
+            Control.updateMemoryTable();
+            residentList = [];
+            readyQueue = new Queue();
+            this.counter = 0;
+            this.baseReg = 0;
+            this.limitReg = 255;
+            this.memoryPlace = this.baseReg;
+            pid = 0;
 
         }
 

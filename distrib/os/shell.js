@@ -418,6 +418,7 @@ var TSOS;
         };
         Shell.prototype.shellRunAll = function (args) {
             //while the resident list contains things, enqueue all of them into the ready Queue
+            _StdOut.putText("length of the list is " + residentList.length);
             var counter = 0;
             for (var i = 0; i < residentList.length; i++) {
                 _StdOut.putText("RLC " + residentList[counter].pid);

@@ -60,6 +60,14 @@ var TSOS;
             for (var i = 0; i < mem.opcodeMemory.length; i++) {
                 mem.opcodeMemory[i] = "00";
             }
+            TSOS.Control.updateMemoryTable();
+            residentList = [];
+            readyQueue = new TSOS.Queue();
+            this.counter = 0;
+            this.baseReg = 0;
+            this.limitReg = 255;
+            this.memoryPlace = this.baseReg;
+            pid = 0;
         };
         memoryManager.prototype.clearSegment = function (base, limit) {
             for (var i = base; i < limit; i++) {

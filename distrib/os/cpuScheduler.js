@@ -23,7 +23,6 @@ var TSOS;
         cpuScheduler.contextSwitch = function () {
             if (quantumCounter == quantum) {
                 if (readyQueue != null) {
-                    _Kernel.krnTrace("ACTUALLY INSIDE THE METHOD NOW");
                     currentlyExecuting.state = 0;
                     _CPU.updatePCB(_CPU);
                     readyQueue.enqueue(currentlyExecuting);
@@ -31,19 +30,31 @@ var TSOS;
                     currentlyExecuting.state = 1;
                     _CPU.updateCPU(currentlyExecuting);
                     quantumCounter = 0;
-                    _Kernel.krnTrace("Q EQUALS" + readyQueue.toString());
                 }
             }
-            //this occurs when a 00 is encountered, and therefore a process is finished
-            if (processTerminated && readyQueue != null) {
+        };
+        cpuScheduler.contextSwitchBreak = function () {
+            _Kernel.krnTrace("This is running");
+            while (readyQueue.length > 0) {
+                _Kernel.krnTrace("LENGTH IS" + readyQueue.size);
                 _CPU.updatePCB(_CPU);
                 currentlyExecuting.state = 2;
-                finishedProcesses[finishedProcesses.length] = currentlyExecuting;
                 currentlyExecuting = readyQueue.dequeue();
                 _CPU.updateCPU(currentlyExecuting);
-                processTerminated = false;
-                _Kernel.krnTrace("Q EQUALS (00 occured)" + readyQueue.toString());
+                _Kernel.krnTrace("A BREAK HAS OCCURED" + readyQueue.toString());
             }
+            /*if(readyQueue.length == 0){
+                _StdOut.putText(" READY Q IS Empty")
+                currentlyExecuting.state = 2;
+                _CPU.updateCPU(currentlyExecuting);
+                _StdOut.advanceLine();
+                _StdOut.putText("The program has finished running");
+                _StdOut.advanceLine();
+                _StdOut.putText(">");
+                _CPU.isExecuting = false;
+
+
+            }*/
         };
         return cpuScheduler;
     })();
