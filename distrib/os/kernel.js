@@ -83,6 +83,7 @@ var TSOS;
             else if (_CPU.isExecuting) {
                 _CPU.cycle();
                 _CPU.printCPU();
+                currentlyExecuting.limitCounter += 1;
                 quantumCounter += 1;
                 // _Kernel.krnTrace("quantum is " + quantum + " and quantum counter is" + quantumCounter);
                 if (quantumCounter == quantum) {

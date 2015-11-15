@@ -96,6 +96,7 @@ module TSOS {
             } else if (_CPU.isExecuting) { // If there are no interrupts then run one CPU cycle if there is anything being processed. {
                 _CPU.cycle();
                 _CPU.printCPU();
+                currentlyExecuting.limitCounter+=1;
                 quantumCounter+=1;
                // _Kernel.krnTrace("quantum is " + quantum + " and quantum counter is" + quantumCounter);
                 if(quantumCounter == quantum){

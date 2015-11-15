@@ -18,6 +18,7 @@ module TSOS {
                     public Zflag: number = 0,
                     public base: number = 0,
                     public limit: number = 0,
+                    public limitCounter: number = 0,
                     public isExecuting: boolean = false) {
 
         }
@@ -32,6 +33,7 @@ module TSOS {
             this.Zflag = 0;
             this.base = base;
             this.limit = limit;
+            this.limitCounter = 0;
             this.isExecuting = false;
 
         }

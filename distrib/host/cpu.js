@@ -41,7 +41,7 @@ var TSOS;
         //update the CPU with the contents of the process control block that is about to be executing
         Cpu.prototype.updateCPU = function (currentlyExecuting) {
             this.PC = currentlyExecuting.PC;
-            this.Acc = currentlyExecuting.PC;
+            this.Acc = currentlyExecuting.Acc;
             this.Xreg = currentlyExecuting.Xreg;
             this.Yreg = currentlyExecuting.Yreg;
             this.Zflag = currentlyExecuting.Zflag;
@@ -72,6 +72,11 @@ var TSOS;
             //if(readyQueue.isEmpty()){
             //    this.isExecuting = false;
             //}
+            /* if(currentlyExecuting.limitCounter > currentlyExecuting.limit){
+ 
+                 _Kernel.krnTrace("Bounds have been breached");
+                 this.isExecuting = false;
+             }*/
             // TODO: Accumulate CPU usage and profiling statistics here.
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             if (this.isExecuting) {
@@ -171,6 +176,7 @@ var TSOS;
                         TSOS.Control.updateCPUtable();
                         this.updatePCB(_CPU);
                         //processTerminated = true;
+                        this.isExecuting = false;
                         TSOS.cpuScheduler.contextSwitchBreak();
                         break;
                     case "EC":

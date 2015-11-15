@@ -37,23 +37,22 @@ var TSOS;
             quantumCounter = 0;
             _Kernel.krnTrace("BREAK SWTICH ---- READY Q SIZE IS" + readyQueue.getSize());
             // if(mem.opcodeMemory[_CPU.PC + 1] != "00" ) {
-            if (readyQueue.getSize() >= 0) {
+            if (readyQueue.getSize() > 0) {
+                _CPU.isExecuting = true;
                 _Kernel.krnTrace("LENGTH IS" + readyQueue.getSize());
-                //_CPU.updatePCB(_CPU);
+                _CPU.updatePCB(_CPU);
                 currentlyExecuting.state = 2;
                 currentlyExecuting = readyQueue.dequeue();
-                if (currentlyExecuting == null) {
-                    _CPU.isExecuting = false;
-                    _StdOut.advanceLine();
-                    _StdOut.putText("The program has finished running");
-                    _StdOut.advanceLine();
-                    _StdOut.putText(">");
-                }
-                else {
-                    _CPU.updateCPU(currentlyExecuting);
-                }
+                _CPU.updateCPU(currentlyExecuting);
             }
-            //}
+            else {
+                //_CPU.updatePCB(_CPU);
+                _CPU.isExecuting = false;
+                _StdOut.advanceLine();
+                _StdOut.putText("Execution complete");
+                _StdOut.advanceLine();
+                _StdOut.putText(">");
+            }
         };
         return cpuScheduler;
     })();
