@@ -471,9 +471,11 @@ var TSOS;
                 if (readyQueue.getSize() == 0) {
                     _StdOut.putText("PID " + args + " killed");
                     _CPU.isExecuting = false;
+                    memManager.clearSegment(currentlyExecuting.base, currentlyExecuting.limit);
                 }
                 else {
                     _StdOut.putText("PID " + args + " killed.");
+                    memManager.clearSegment(currentlyExecuting.base, currentlyExecuting.limit);
                     currentlyExecuting = readyQueue.dequeue();
                     _CPU.updateCPU(currentlyExecuting);
                 }
@@ -492,10 +494,12 @@ var TSOS;
                             var kill = readyQueue.dequeue();
                             var keep = readyQueue.dequeue();
                             if (kill.pid == args) {
+                                memManager.clearSegment(kill.base, kill.limit);
                                 readyQueue.enqueue(keep);
                                 var pidFound = true;
                             }
                             else {
+                                memManager.clearSegment(keep.base, keep.limit);
                                 readyQueue.enqueue(kill);
                                 var pidFound = true;
                             }

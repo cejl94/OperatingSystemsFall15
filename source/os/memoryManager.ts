@@ -123,6 +123,7 @@ export class memoryManager {
                 mem.opcodeMemory[i] = "00";
                 // just clears this stuff right outta that memory segment
             }
+            Control.updateMemoryTable();
         }
     }
 }

@@ -75,6 +75,7 @@ var TSOS;
             for (var i = base; i < limit; i++) {
                 mem.opcodeMemory[i] = "00";
             }
+            TSOS.Control.updateMemoryTable();
         };
         return memoryManager;
     })();
