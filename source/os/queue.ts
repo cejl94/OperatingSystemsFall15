@@ -33,6 +33,20 @@ module TSOS {
             return retVal;
         }
 
+        public index(n){
+
+            var value = this.q[n];
+            return value;
+
+        }
+
+        public getRunSingle(n){
+
+
+
+
+        }
+
         public toString() {
             var retVal = "";
             for (var i in this.q) {
@@ -40,5 +54,7 @@ module TSOS {
             }
             return retVal;
         }
+
+
     }
 }

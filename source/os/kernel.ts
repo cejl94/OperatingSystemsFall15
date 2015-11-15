@@ -95,12 +95,12 @@ module TSOS {
                 this.krnInterruptHandler(interrupt.irq, interrupt.params);
             } else if (_CPU.isExecuting) { // If there are no interrupts then run one CPU cycle if there is anything being processed. {
                 _CPU.cycle();
-                _CPU.printCPU();
+                //_CPU.printCPU();
                 currentlyExecuting.limitCounter+=1;
                 quantumCounter+=1;
                // _Kernel.krnTrace("quantum is " + quantum + " and quantum counter is" + quantumCounter);
                 if(quantumCounter == quantum){
-                    _Kernel.krnTrace("SWITCHING NOW");
+                    _Kernel.krnTrace("SWITCHING FROM PID " + currentlyExecuting.pid + " TO PID " + readyQueue.index(0).pid);
                     cpuScheduler.contextSwitch();
                 }
             } else {                      // If there are no interrupts and there is nothing being executed then just be idle. {

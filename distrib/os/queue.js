@@ -30,6 +30,12 @@ var TSOS;
             }
             return retVal;
         };
+        Queue.prototype.index = function (n) {
+            var value = this.q[n];
+            return value;
+        };
+        Queue.prototype.getRunSingle = function (n) {
+        };
         Queue.prototype.toString = function () {
             var retVal = "";
             for (var i in this.q) {

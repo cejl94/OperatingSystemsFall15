@@ -518,14 +518,26 @@ module TSOS {
 
         public shellRun(args){
 
-            if(parseInt(args) == pid){
-                _CPU.PC = 0;
-                _CPU.isExecuting = true;
+            var execute = false;
 
+            if(!execute) {
+                for (var i = 0; i < residentList.length; i++) {
+                    //loop through resident list and get each elements pid;
+                    var check = residentList[i].pid;
+                    //if the pid is equal to what was input, set currently executing to that PCB
+                    if (check == args) {
+                        _StdOut.putText("Executing PID " + args);
+                        currentlyExecuting = residentList[i];
+                        _CPU.updateCPU(currentlyExecuting);
+                        _CPU.isExecuting = true;
+                        execute =true;
 
-            }
-            else{
-                _StdOut.putText("This is not a valid pid, please enter a correct pid");
+                    }
+                    else {
+                        _StdOut.putText("PID  " + args + " does not exist.");
+
+                    }
+                }
             }
 
         }
@@ -557,14 +569,19 @@ module TSOS {
 
         public shellQuantum(args){
 
-            _StdOut.putText("Quantum has been set to " + args);
             quantum = args;
+            _StdOut.putText("Quantum has been set to " + args);
+
         }
 
         public shellPS(args){
+            //first print out the curerntly executing pid
             //loop through ready queue and std out the PIDs
-            for(var i = 0; i < readyQueue.length; i++){
-                _StdOut.putText(readyQueue[i].pid+ " ");
+
+            _StdOut.putText("Process pids are " + currentlyExecuting.pid);
+            for(var i = 0; i < readyQueue.getSize(); i++){
+               // _StdOut.putText("Hello");
+                _StdOut.putText(" " +readyQueue.index(i).pid);
             }
 
         }
