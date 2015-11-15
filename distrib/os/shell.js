@@ -468,13 +468,15 @@ var TSOS;
             //the next element in the queue and update the CPU.
             if (currentlyExecuting.pid == args) {
                 // check if what you are killing in the only existing process
-                if (readyQueue.getSize == 0) {
-                    _StdOut.putText("PID " + args + " killed.");
+                if (readyQueue.getSize() == 0) {
+                    _StdOut.putText("PID " + args + " killed");
                     _CPU.isExecuting = false;
                 }
-                _StdOut.putText("PID " + args + " killed.");
-                currentlyExecuting = readyQueue.dequeue();
-                _CPU.updateCPU(currentlyExecuting);
+                else {
+                    _StdOut.putText("PID " + args + " killed.");
+                    currentlyExecuting = readyQueue.dequeue();
+                    _CPU.updateCPU(currentlyExecuting);
+                }
             }
             else {
                 for (var i = 0; i < readyQueue.getSize(); i++) {

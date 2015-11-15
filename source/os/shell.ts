@@ -606,16 +606,20 @@ module TSOS {
             if(currentlyExecuting.pid == args) {
 
                 // check if what you are killing in the only existing process
-                if (readyQueue.getSize == 0) {
+                if (readyQueue.getSize() == 0) {
 
-                    _StdOut.putText("PID " + args + " killed.");
+                    _StdOut.putText("PID " + args + " killed");
                     _CPU.isExecuting = false;
 
                 }
+                else{
 
-                _StdOut.putText("PID " + args + " killed.");
-                currentlyExecuting = readyQueue.dequeue();
-                _CPU.updateCPU(currentlyExecuting);
+                    _StdOut.putText("PID " + args + " killed.");
+                    currentlyExecuting = readyQueue.dequeue();
+                    _CPU.updateCPU(currentlyExecuting);
+                }
+
+
 
 
             }
