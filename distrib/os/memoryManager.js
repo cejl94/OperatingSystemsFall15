@@ -60,7 +60,9 @@ var TSOS;
             for (var i = 0; i < mem.opcodeMemory.length; i++) {
                 mem.opcodeMemory[i] = "00";
             }
+            _CPU.resetCPU();
             TSOS.Control.updateMemoryTable();
+            TSOS.Control.updateCPUtable();
             residentList = [];
             readyQueue = new TSOS.Queue();
             this.counter = 0;

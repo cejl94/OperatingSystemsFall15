@@ -53,6 +53,20 @@ var TSOS;
             currentlyExecuting.Yreg = this.Yreg;
             currentlyExecuting.Zflag = this.Zflag;
         };
+        Cpu.prototype.printCPU = function () {
+            _Kernel.krnTrace("Accumulator value is " + this.Acc);
+            _Kernel.krnTrace("Xreg value is " + this.Xreg);
+            _Kernel.krnTrace("Yreg value is " + this.Yreg);
+            _Kernel.krnTrace("Zflag value is " + this.Zflag);
+        };
+        Cpu.prototype.resetCPU = function () {
+            this.PC = 0;
+            this.Acc = 0;
+            this.Xreg = 0;
+            this.Yreg = 0;
+            this.Zflag = 0;
+            this.isExecuting = false;
+        };
         Cpu.prototype.cycle = function () {
             _Kernel.krnTrace('CPU cycle');
             //if(readyQueue.isEmpty()){
@@ -62,6 +76,7 @@ var TSOS;
             // Do the real work here. Be sure to set this.isExecuting appropriately.
             if (this.isExecuting) {
                 var opcode = memManager.readCodeInMemory(this.PC);
+                _Kernel.krnTrace("PROGRAM COUNTER IS" + _CPU.PC + " OPCODE IS " + mem.opcodeMemory[this.PC]);
                 switch (opcode) {
                     case "A9":
                         // Take the next byte in memory, convert it to a decimal number, and store it in the accumulator
@@ -187,7 +202,7 @@ var TSOS;
                             // _Kernel.krnTrace("ok so here we go, PC is " + this.PC);
                             var jump = this.PC + num;
                             // _Kernel.krnTrace("the jump variable is " + jump.toString());
-                            if (jump > 255) {
+                            if (jump > currentlyExecuting.limit) {
                                 this.PC = jump - 255;
                             }
                             else {
@@ -215,17 +230,17 @@ var TSOS;
                     case "FF":
                         // If Xreg is 1, print out the Y register
                         if (this.Xreg == 1) {
-                            // _Kernel.krnTrace("printing " + this.Yreg.toString());
+                            _Kernel.krnTrace("printing " + this.Yreg.toString());
                             _StdOut.putText(this.Yreg.toString());
                             this.PC++;
                         }
                         // If Xreg is 2, print out the 00 terminated string starting at the specified address in memory
                         if (this.Xreg == 2) {
                             // this gets the position in memory of the first asciicharacter
-                            var place = this.Yreg;
-                            while (mem.opcodeMemory[place + currentlyExecuting.base] != "00") {
-                                //_Kernel.krnTrace("printing " + String.fromCharCode(parseInt(mem.opcodeMemory[place],16)));
-                                var ascii = String.fromCharCode(parseInt(mem.opcodeMemory[place + currentlyExecuting.base], 16));
+                            var place = this.Yreg + currentlyExecuting.base;
+                            while (mem.opcodeMemory[place] != "00") {
+                                _Kernel.krnTrace("printing " + String.fromCharCode(parseInt(mem.opcodeMemory[place], 16)));
+                                var ascii = String.fromCharCode(parseInt(mem.opcodeMemory[place], 16));
                                 _StdOut.putText(ascii);
                                 place++;
                             }
@@ -238,7 +253,7 @@ var TSOS;
                         break;
                     default:
                         //more of a debugging statement currently
-                        _StdOut.putText("the code at " + mem.opcodeMemory[this.PC] + " is incorrect");
+                        _Kernel.krnTrace("the code at " + mem.opcodeMemory[this.PC] + " is incorrect");
                         this.isExecuting = false;
                 }
             }

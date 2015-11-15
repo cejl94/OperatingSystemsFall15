@@ -22,19 +22,21 @@ var TSOS;
         // switch PCBS. also, if a 00 is reached, switch PCBs
         cpuScheduler.contextSwitch = function () {
             if (quantumCounter == quantum) {
-                if (readyQueue != null) {
+                quantumCounter = 0;
+                if (readyQueue.getSize() > 0) {
                     currentlyExecuting.state = 0;
                     _CPU.updatePCB(_CPU);
                     readyQueue.enqueue(currentlyExecuting);
                     currentlyExecuting = readyQueue.dequeue();
                     currentlyExecuting.state = 1;
                     _CPU.updateCPU(currentlyExecuting);
-                    quantumCounter = 0;
                 }
             }
         };
         cpuScheduler.contextSwitchBreak = function () {
-            _Kernel.krnTrace("READY Q SIZE IS" + readyQueue.getSize());
+            quantumCounter = 0;
+            _Kernel.krnTrace("BREAK SWTICH ---- READY Q SIZE IS" + readyQueue.getSize());
+            // if(mem.opcodeMemory[_CPU.PC + 1] != "00" ) {
             if (readyQueue.getSize() >= 0) {
                 _Kernel.krnTrace("LENGTH IS" + readyQueue.getSize());
                 //_CPU.updatePCB(_CPU);
@@ -50,23 +52,8 @@ var TSOS;
                 else {
                     _CPU.updateCPU(currentlyExecuting);
                 }
-                //_Kernel.krnTrace("A BREAK HAS OCCURED" + readyQueue.toString());
-                if (currentlyExecuting == null) {
-                    _CPU.isExecuting = false;
-                }
             }
-            /*if(readyQueue.length == 0){
-                _StdOut.putText(" READY Q IS Empty")
-                currentlyExecuting.state = 2;
-                _CPU.updateCPU(currentlyExecuting);
-                _StdOut.advanceLine();
-                _StdOut.putText("The program has finished running");
-                _StdOut.advanceLine();
-                _StdOut.putText(">");
-                _CPU.isExecuting = false;
-
-
-            }*/
+            //}
         };
         return cpuScheduler;
     })();

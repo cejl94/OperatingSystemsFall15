@@ -103,7 +103,10 @@ export class memoryManager {
                 //must also empty resident list and ready queue
 
             }
+            _CPU.resetCPU();
+
             Control.updateMemoryTable();
+            Control.updateCPUtable();
             residentList = [];
             readyQueue = new Queue();
             this.counter = 0;
