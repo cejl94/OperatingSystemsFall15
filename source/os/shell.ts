@@ -596,6 +596,75 @@ module TSOS {
         public shellKill(args){
             //kill a process with the entered pid,
 
+
+            var pidFound = false;
+
+
+            //if the pid you want to kill is currently executing, set currently executing to
+            //the next element in the queue and update the CPU.
+
+            if(currentlyExecuting.pid == args) {
+
+                // check if what you are killing in the only existing process
+                if (readyQueue.getSize == 0) {
+
+                    _StdOut.putText("PID " + args + " killed.");
+                    _CPU.isExecuting = false;
+
+                }
+
+                _StdOut.putText("PID " + args + " killed.");
+                currentlyExecuting = readyQueue.dequeue();
+                _CPU.updateCPU(currentlyExecuting);
+
+
+            }
+
+            // else the PID should be in the ready queue, so then lets search that
+            else{
+
+                for(var i = 0; i < readyQueue.getSize(); i++){
+
+                    //if the pid matches, remove that process from the ready queue
+                    if(readyQueue.index(i).pid == args){
+
+                        //if only one process exists in the ready queue, just remove it.
+                        if(readyQueue.getSize() == 1){
+
+                            var kill = readyQueue.dequeue();
+
+
+                        }
+
+                        else{
+
+                            // remove the two (ready queue can have a maximum of 3 elements) from the queue and check
+                            // their pids, then after you know which is the culprit, put the other one back
+                            var kill = readyQueue.dequeue();
+                            var keep = readyQueue.dequeue();
+
+                            if(kill.pid == args){
+                                readyQueue.enqueue(keep);
+                                var pidFound = true;
+
+                            }
+                            else{
+                                readyQueue.enqueue(kill);
+                                var pidFound = true;
+                            }
+                        }
+
+
+                    }
+                }
+            }
+
+            if(pidFound){
+
+                _StdOut.putText("PID " + args + " killed. ");
+            }
+
+
         }
 
     }
