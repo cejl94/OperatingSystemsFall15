@@ -25,6 +25,7 @@ var mem;
 var memManager;
 var cpuScheduler;
 var coreMemoryTable;
+var pcbReadyQueueTable;
 var cpuTable;
 var prosBlock;
 var _OSclock = 0; // Page 23.

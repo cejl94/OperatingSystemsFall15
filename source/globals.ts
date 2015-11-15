@@ -30,6 +30,7 @@ var mem: TSOS.memory;
 var memManager: TSOS.memoryManager;
 var cpuScheduler: TSOS.cpuScheduler;
 var coreMemoryTable: HTMLTableElement;
+var pcbReadyQueueTable: HTMLTableElement;
 var cpuTable: HTMLTableElement;
 var prosBlock: TSOS.pcb;
 var _OSclock: number = 0;  // Page 23.

@@ -34,6 +34,7 @@ var TSOS;
             _DrawingContext = _Canvas.getContext("2d");
             coreMemoryTable = document.getElementById("coreMemoryTable");
             cpuTable = document.getElementById("cpuTable");
+            pcbReadyQueueTable = document.getElementById("pcbReadyQueueTable");
             // Enable the added-in canvas text functions (see canvastext.ts for provenance and details).
             TSOS.CanvasTextFunctions.enable(_DrawingContext); // Text functionality is now built in to the HTML5 canvas. But this is old-school, and fun, so we'll keep it.
             // Clear the log text box.
@@ -45,6 +46,7 @@ var TSOS;
             // Check for our testing and enrichment core, which
             // may be referenced here (from index.html) as function Glados().
             this.createMemoryTable();
+            //this.createPcbTable();
             if (typeof Glados === "function") {
                 // function Glados() is here, so instantiate Her into
                 // the global (and properly capitalized) _GLaDOS variable.
@@ -147,6 +149,32 @@ var TSOS;
                 }
             }
         };
+        /* public static createPcbTable():void {
+ 
+             //32 rows(768/8) = 96
+             //9 columns incleading a header
+ 
+ 
+             for(var x = 0; x < 4; x++){
+                 var row = <HTMLTableRowElement>pcbReadyQueueTable.insertRow(x);
+ 
+                 for(var y = 0; y < 10; y++){
+                     var cell = row.insertCell(y);
+                     if(x != 0){
+ 
+                         cell.innerHTML = "0";
+ 
+ 
+                     }
+                     else{
+                         cell.innerHTML = "0";
+                     }
+ 
+                 }
+             }
+ 
+ 
+         }*/
         Control.updateMemoryTable = function () {
             //this will grab the opCode sitting in memory
             var counter = 0;
@@ -180,6 +208,77 @@ var TSOS;
             cells.innerHTML = _CPU.Yreg.toString();
             cells = rows.cells[5];
             cells.innerHTML = _CPU.Zflag.toString();
+        };
+        Control.updatePcbTable = function () {
+            if (currentlyExecuting != null) {
+                var rows = pcbReadyQueueTable.rows[1];
+                var cells = rows.cells[0];
+                cells.innerHTML = currentlyExecuting.pid.toString();
+                cells = rows.cells[1];
+                cells.innerHTML = currentlyExecuting.PC.toString();
+                cells = rows.cells[2];
+                cells.innerHTML = mem.opcodeMemory[_CPU.PC];
+                cells = rows.cells[3];
+                cells.innerHTML = currentlyExecuting.Acc.toString();
+                cells = rows.cells[4];
+                cells.innerHTML = currentlyExecuting.Xreg.toString();
+                cells = rows.cells[5];
+                cells.innerHTML = currentlyExecuting.Yreg.toString();
+                cells = rows.cells[6];
+                cells.innerHTML = currentlyExecuting.Zflag.toString();
+                cells = rows.cells[7];
+                cells.innerHTML = currentlyExecuting.base.toString();
+                cells = rows.cells[8];
+                cells.innerHTML = currentlyExecuting.limit.toString();
+                cells = rows.cells[9];
+                cells.innerHTML = currentlyExecuting.state.toString();
+            }
+            if (readyQueue.index(0) != null) {
+                rows = pcbReadyQueueTable.rows[2];
+                cells = rows.cells[0];
+                cells.innerHTML = readyQueue.index(0).pid.toString();
+                cells = rows.cells[1];
+                cells.innerHTML = readyQueue.index(0).PC.toString();
+                cells = rows.cells[2];
+                cells.innerHTML = mem.opcodeMemory[readyQueue.index(0).PC];
+                cells = rows.cells[3];
+                cells.innerHTML = readyQueue.index(0).Acc.toString();
+                cells = rows.cells[4];
+                cells.innerHTML = readyQueue.index(0).Xreg.toString();
+                cells = rows.cells[5];
+                cells.innerHTML = readyQueue.index(0).Yreg.toString();
+                cells = rows.cells[6];
+                cells.innerHTML = readyQueue.index(0).Zflag.toString();
+                cells = rows.cells[7];
+                cells.innerHTML = readyQueue.index(0).base.toString();
+                cells = rows.cells[8];
+                cells.innerHTML = readyQueue.index(0).limit.toString();
+                cells = rows.cells[9];
+                cells.innerHTML = readyQueue.index(0).state.toString();
+            }
+            if (readyQueue.index(1) != null) {
+                rows = pcbReadyQueueTable.rows[3];
+                cells = rows.cells[0];
+                cells.innerHTML = readyQueue.index(1).pid.toString();
+                cells = rows.cells[1];
+                cells.innerHTML = readyQueue.index(1).PC.toString();
+                cells = rows.cells[2];
+                cells.innerHTML = mem.opcodeMemory[readyQueue.index(1).PC];
+                cells = rows.cells[3];
+                cells.innerHTML = readyQueue.index(1).Acc.toString();
+                cells = rows.cells[4];
+                cells.innerHTML = readyQueue.index(1).Xreg.toString();
+                cells = rows.cells[5];
+                cells.innerHTML = readyQueue.index(1).Yreg.toString();
+                cells = rows.cells[6];
+                cells.innerHTML = readyQueue.index(1).Zflag.toString();
+                cells = rows.cells[7];
+                cells.innerHTML = readyQueue.index(1).base.toString();
+                cells = rows.cells[8];
+                cells.innerHTML = readyQueue.index(1).limit.toString();
+                cells = rows.cells[9];
+                cells.innerHTML = readyQueue.index(1).state.toString();
+            }
         };
         return Control;
     })();

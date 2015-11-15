@@ -69,6 +69,10 @@ h3 {
 
 }
 
+#pcbReadyQueueTable{
+  text-align: center;
+}
+
 .normal_button {
   width: 100px;
 }

@@ -91,6 +91,7 @@ var TSOS;
                         this.PC += 2;
                         //_Kernel.krnTrace("The accumulator value is " + this.Acc);
                         TSOS.Control.updateCPUtable();
+                        TSOS.Control.updatePcbTable();
                         break;
                     case "AD":
                         // Take the next 2 bytes in memory, swap them, convert (the two byte string)
@@ -103,6 +104,7 @@ var TSOS;
                         this.PC += 3;
                         // _Kernel.krnTrace("The loaded accumulator value is " + this.Acc);
                         TSOS.Control.updateCPUtable();
+                        TSOS.Control.updatePcbTable();
                         break;
                     case "8D":
                         // Take the next 2 bytes in memory, swap them, convert (the two byte string)
@@ -123,6 +125,7 @@ var TSOS;
                         // _Kernel.krnTrace("The stored accumulator value is " + this.Acc);
                         TSOS.Control.updateCPUtable();
                         TSOS.Control.updateMemoryTable();
+                        TSOS.Control.updatePcbTable();
                         break;
                     case "6D":
                         // Load a value from memory, and add it to the accumulator
@@ -134,6 +137,7 @@ var TSOS;
                         this.PC += 3;
                         // _Kernel.krnTrace("The added carry accumulator value is " + this.Acc);
                         TSOS.Control.updateCPUtable();
+                        TSOS.Control.updatePcbTable();
                         break;
                     case "A2":
                         // Load an immediate value into the X register
@@ -143,6 +147,7 @@ var TSOS;
                         this.PC += 2;
                         // _Kernel.krnTrace("The X register value is " + this.Xreg);
                         TSOS.Control.updateCPUtable();
+                        TSOS.Control.updatePcbTable();
                         break;
                     case "AE":
                         // Load a value from memory into the X register
@@ -153,6 +158,7 @@ var TSOS;
                         this.PC += 3;
                         //_Kernel.krnTrace("The loaded X register value is " + this.Xreg);
                         TSOS.Control.updateCPUtable();
+                        TSOS.Control.updatePcbTable();
                         break;
                     case "A0":
                         // Load an immediate value into the Y register
@@ -162,6 +168,7 @@ var TSOS;
                         this.PC += 2;
                         //_Kernel.krnTrace("The Y register value is " + this.Yreg);
                         TSOS.Control.updateCPUtable();
+                        TSOS.Control.updatePcbTable();
                         break;
                     case "AC":
                         // Load a value from memory into the Y register
@@ -172,6 +179,7 @@ var TSOS;
                         this.PC += 3;
                         //_Kernel.krnTrace("The loaded Y register value is " + this.Yreg);
                         TSOS.Control.updateCPUtable();
+                        TSOS.Control.updatePcbTable();
                         break;
                     case "EA":
                         // No operation, simply increase the program counter
@@ -182,6 +190,7 @@ var TSOS;
                         //content of the CPU
                         //then we want to switch to the next process, and NOT enqueue this process again
                         TSOS.Control.updateCPUtable();
+                        TSOS.Control.updatePcbTable();
                         this.updatePCB(_CPU);
                         //processTerminated = true;
                         this.isExecuting = false;
@@ -205,6 +214,7 @@ var TSOS;
                         }
                         //_Kernel.krnTrace(" the z flag is now " + this.Zflag);
                         TSOS.Control.updateCPUtable();
+                        TSOS.Control.updatePcbTable();
                         break;
                     case "D0":
                         // This is a BNE code, jumps back to the correct place in memory to loop
@@ -228,6 +238,7 @@ var TSOS;
                             this.PC += 1;
                         }
                         TSOS.Control.updateCPUtable();
+                        TSOS.Control.updatePcbTable();
                         break;
                     case "EE":
                         // Grab a value from an address in memory and add one to it, then put it back in memory
@@ -264,6 +275,7 @@ var TSOS;
                             _StdOut.putText("Syscall will not occur when x register is neither 1 or 2");
                         }
                         TSOS.Control.updateCPUtable();
+                        TSOS.Control.updatePcbTable();
                         break;
                     default:
                         //more of a debugging statement currently

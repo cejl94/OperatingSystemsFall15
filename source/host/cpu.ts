@@ -109,6 +109,7 @@ module TSOS {
                         this.PC += 2;
                         //_Kernel.krnTrace("The accumulator value is " + this.Acc);
                         Control.updateCPUtable();
+                        Control.updatePcbTable();
 
                         break;
                     case "AD":
@@ -123,6 +124,8 @@ module TSOS {
                         this.PC += 3;
                        // _Kernel.krnTrace("The loaded accumulator value is " + this.Acc);
                         Control.updateCPUtable();
+                        Control.updatePcbTable();
+
                         break;
                     case "8D":
                         // Take the next 2 bytes in memory, swap them, convert (the two byte string)
@@ -147,6 +150,8 @@ module TSOS {
                        // _Kernel.krnTrace("The stored accumulator value is " + this.Acc);
                         Control.updateCPUtable();
                         Control.updateMemoryTable();
+                        Control.updatePcbTable();
+
                         break;
                     case "6D":
                         // Load a value from memory, and add it to the accumulator
@@ -158,6 +163,8 @@ module TSOS {
                         this.PC += 3;
                        // _Kernel.krnTrace("The added carry accumulator value is " + this.Acc);
                         Control.updateCPUtable();
+                        Control.updatePcbTable();
+
                         break;
                     case "A2":
                         // Load an immediate value into the X register
@@ -167,6 +174,8 @@ module TSOS {
                         this.PC += 2;
                        // _Kernel.krnTrace("The X register value is " + this.Xreg);
                         Control.updateCPUtable();
+                        Control.updatePcbTable();
+
                         break;
                     case "AE":
                         // Load a value from memory into the X register
@@ -177,6 +186,8 @@ module TSOS {
                         this.PC += 3;
                         //_Kernel.krnTrace("The loaded X register value is " + this.Xreg);
                         Control.updateCPUtable();
+                        Control.updatePcbTable();
+
                         break;
                     case "A0":
                         // Load an immediate value into the Y register
@@ -186,6 +197,8 @@ module TSOS {
                         this.PC += 2;
                         //_Kernel.krnTrace("The Y register value is " + this.Yreg);
                         Control.updateCPUtable();
+                        Control.updatePcbTable();
+
                         break;
                     case "AC":
                         // Load a value from memory into the Y register
@@ -196,6 +209,8 @@ module TSOS {
                         this.PC += 3;
                         //_Kernel.krnTrace("The loaded Y register value is " + this.Yreg);
                         Control.updateCPUtable();
+                        Control.updatePcbTable();
+
                         break;
                     case "EA":
                         // No operation, simply increase the program counter
@@ -207,6 +222,8 @@ module TSOS {
                         //then we want to switch to the next process, and NOT enqueue this process again
 
                         Control.updateCPUtable();
+                        Control.updatePcbTable();
+
                         this.updatePCB(_CPU);
                         //processTerminated = true;
                         this.isExecuting = false;
@@ -234,6 +251,8 @@ module TSOS {
 
                         //_Kernel.krnTrace(" the z flag is now " + this.Zflag);
                         Control.updateCPUtable();
+                        Control.updatePcbTable();
+
 
                         break;
                     case "D0":
@@ -263,6 +282,8 @@ module TSOS {
                             this.PC+=1;
                         }
                         Control.updateCPUtable();
+                        Control.updatePcbTable();
+
 
                         break;
                     case "EE":
@@ -275,6 +296,7 @@ module TSOS {
                         var placeBack = toIncrement.toString(16);
                         mem.opcodeMemory[num + currentlyExecuting.base] = placeBack;
                         this.PC += 3;
+
                         //_Kernel.krnTrace("the byte is now " + parseInt(mem.opcodeMemory[num + currentlyExecuting.base], 16));
                         break;
                     case "FF":
@@ -306,6 +328,7 @@ module TSOS {
                             _StdOut.putText("Syscall will not occur when x register is neither 1 or 2");
                         }
                         Control.updateCPUtable();
+                        Control.updatePcbTable();
                             break;
                     default:
                         //more of a debugging statement currently
