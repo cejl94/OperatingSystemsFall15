@@ -576,8 +576,13 @@ module TSOS {
 
         public shellQuantum(args){
 
-            quantum = args;
-            _StdOut.putText("Quantum has been set to " + args);
+            if(args < 0){
+                _StdOut.putText("Quantum cannot be negative");
+            }
+            else {
+                quantum = args;
+                _StdOut.putText("Quantum has been set to " + args);
+            }
 
         }
 

@@ -142,8 +142,10 @@ module TSOS {
                         }
                         //if memory is breached kill that process
                         else{
-                            _StdOut.putText("Memory breached. Terminating process");
+                            _StdOut.putText("Memory breached. Terminating process ");
+                            _StdOut.advanceLine();
                             _OsShell.shellKill(currentlyExecuting.pid);
+
 
                         }
 

@@ -119,7 +119,8 @@ var TSOS;
                             this.PC += 3;
                         }
                         else {
-                            _StdOut.putText("Memory breached. Terminating process");
+                            _StdOut.putText("Memory breached. Terminating process ");
+                            _StdOut.advanceLine();
                             _OsShell.shellKill(currentlyExecuting.pid);
                         }
                         // _Kernel.krnTrace("The stored accumulator value is " + this.Acc);
