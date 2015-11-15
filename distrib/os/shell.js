@@ -409,22 +409,25 @@ var TSOS;
         };
         Shell.prototype.shellRun = function (args) {
             var execute = false;
-            if (!execute) {
-                for (var i = 0; i < residentList.length; i++) {
-                    //loop through resident list and get each elements pid;
-                    var check = residentList[i].pid;
-                    //if the pid is equal to what was input, set currently executing to that PCB
-                    if (check == args) {
-                        _StdOut.putText("Executing PID " + args);
-                        currentlyExecuting = residentList[i];
-                        _CPU.updateCPU(currentlyExecuting);
-                        _CPU.isExecuting = true;
-                        execute = true;
-                    }
-                    else {
-                        _StdOut.putText("PID  " + args + " does not exist.");
-                    }
+            for (var i = 0; i < residentList.length; i++) {
+                //loop through resident list and get each elements pid;
+                var check = residentList[i].pid;
+                //if the pid is equal to what was input, set currently executing to that PCB
+                if (check == args) {
+                    // _StdOut.putText("Executing PID " + args);
+                    currentlyExecuting = residentList[i];
+                    _CPU.updateCPU(currentlyExecuting);
+                    _CPU.isExecuting = true;
+                    execute = true;
                 }
+                else {
+                }
+            }
+            if (execute) {
+                _StdOut.putText("Executing PID " + args);
+            }
+            else {
+                _StdOut.putText("PID  " + args + " does not exist.");
             }
         };
         Shell.prototype.shellRunAll = function (args) {

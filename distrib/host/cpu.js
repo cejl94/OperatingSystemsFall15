@@ -111,10 +111,17 @@ var TSOS;
                         var valueToStore = this.Acc.toString(16);
                         var swap = memManager.readCodeInMemory(this.PC + 2) + memManager.readCodeInMemory(this.PC + 1);
                         var num = parseInt(swap, 16);
-                        mem.opcodeMemory[num + currentlyExecuting.base] = valueToStore;
-                        this.PC += 3;
+                        if (num + currentlyExecuting.base <= currentlyExecuting.limit) {
+                            mem.opcodeMemory[num + currentlyExecuting.base] = valueToStore;
+                            this.PC += 3;
+                        }
+                        else {
+                            _StdOut.putText("Memory breached, idiot.");
+                            this.isExecuting = false;
+                        }
                         // _Kernel.krnTrace("The stored accumulator value is " + this.Acc);
                         TSOS.Control.updateCPUtable();
+                        TSOS.Control.updateMemoryTable();
                         break;
                     case "6D":
                         // Load a value from memory, and add it to the accumulator
