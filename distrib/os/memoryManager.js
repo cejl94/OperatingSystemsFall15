@@ -60,6 +60,8 @@ var TSOS;
             for (var i = 0; i < mem.opcodeMemory.length; i++) {
                 mem.opcodeMemory[i] = "00";
             }
+            //reset all tables that were updated, the ready queue and resident lsit, and set the PC, base, limit and index
+            //counters back to their originals. For now pid also sets back to 0
             _CPU.resetCPU();
             TSOS.Control.updateMemoryTable();
             TSOS.Control.updateCPUtable();
