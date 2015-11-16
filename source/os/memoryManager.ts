@@ -103,6 +103,9 @@ export class memoryManager {
                 //must also empty resident list and ready queue
 
             }
+
+            //reset all tables that were updated, the ready queue and resident lsit, and set the PC, base, limit and index
+            //counters back to their originals. For now pid also sets back to 0
             _CPU.resetCPU();
 
             Control.updateMemoryTable();

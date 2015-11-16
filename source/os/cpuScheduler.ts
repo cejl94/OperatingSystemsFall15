@@ -46,10 +46,13 @@ module TSOS{
 
             if(quantumCounter == quantum){
 
+                //if theres only one process just reset the quantum
                 quantumCounter = 0;
 
 
-
+                //otherwise, set the state of the process to 0 (waiting) and then update the process control block
+                //to the CPUs contents. put it back in the queue, and set the currently executing PCB to the next thing in the queue.
+                // set its state to 1 for executing
                 if(readyQueue.getSize() > 0) {
                     currentlyExecuting.state = 0;
                     _CPU.updatePCB(_CPU);
@@ -69,7 +72,8 @@ module TSOS{
         static contextSwitchBreak():void{
             quantumCounter = 0;
             _Kernel.krnTrace("BREAK SWTICH ---- READY Q SIZE IS" + readyQueue.getSize());
-           // if(mem.opcodeMemory[_CPU.PC + 1] != "00" ) {
+           //  set the quantu back to 0, and then check if the ready queue has items in it. If there is, set executing
+            // back to true, and then switch the PCBS, make sure to set the state to 2 for terminated before switching PCBs
                 if (readyQueue.getSize() > 0) {
                     _CPU.isExecuting = true;
                     _Kernel.krnTrace("LENGTH IS" + readyQueue.getSize());
@@ -78,6 +82,7 @@ module TSOS{
                     currentlyExecuting = readyQueue.dequeue();
                     _CPU.updateCPU(currentlyExecuting);
 
+                    // this means that there is no more processes and currently executing is the last process, just set executing to false
                     } else {
                     //_CPU.updatePCB(_CPU);
                     _CPU.isExecuting = false;
@@ -90,7 +95,7 @@ module TSOS{
                     }
 
                 }
-            //}
+
 
 
         }
