@@ -674,7 +674,7 @@ module TSOS {
 
             if(pidFound){
 
-                _StdOut.putText("PID " + args + " killed. ");  
+                _StdOut.putText("PID " + args + " killed. ");
             }
 
 
