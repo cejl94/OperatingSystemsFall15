@@ -191,11 +191,11 @@ var TSOS;
                         //content of the CPU
                         //then we want to switch to the next process, and NOT enqueue this process again
                         TSOS.Control.updateCPUtable();
-                        TSOS.Control.updatePcbTable();
                         this.updatePCB(_CPU);
                         //processTerminated = true;
                         this.isExecuting = false;
                         TSOS.cpuScheduler.contextSwitchBreak();
+                        TSOS.Control.updatePcbTable();
                         break;
                     case "EC":
                         // Compare the value of an address in memory to the X register

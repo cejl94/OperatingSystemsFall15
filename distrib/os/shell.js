@@ -377,7 +377,7 @@ var TSOS;
         Shell.prototype.shellStatus = function (args) {
             var htb = document.getElementById("htbOutput2");
             if (args.length > 0) {
-                htb.value = args;
+                htb.innerHTML = args.join(" ");
             }
         };
         // checks the user program input for hex characters and spaces only
@@ -460,6 +460,9 @@ var TSOS;
         Shell.prototype.shellPS = function (args) {
             //first print out the curerntly executing pid
             //loop through ready queue and std out the PIDs
+            if (currentlyExecuting == null && readyQueue.getSize() == 0) {
+                _StdOut.putText("No pids currently running");
+            }
             _StdOut.putText("Process pids are " + currentlyExecuting.pid);
             for (var i = 0; i < readyQueue.getSize(); i++) {
                 // _StdOut.putText("Hello");
@@ -468,19 +471,25 @@ var TSOS;
         };
         Shell.prototype.shellKill = function (args) {
             //kill a process with the entered pid,
+            //use this later
             var pidFound = false;
+            //if there is no existing process
+            if (currentlyExecuting == null && readyQueue.getSize() == 0) {
+                _StdOut.putText("No pids currently running");
+                _StdOut.advanceLine();
+                _StdOut.putText(">");
+            }
             //if the pid you want to kill is currently executing, set currently executing to
             //the next element in the queue and update the CPU.
             if (currentlyExecuting.pid == args) {
                 // check if what you are killing in the only existing process
                 if (readyQueue.getSize() == 0) {
-                    _StdOut.putText("PID " + args + " killed");
+                    _StdOut.putText("PID " + args + " killed.");
                     _CPU.isExecuting = false;
-                    memManager.clearSegment(currentlyExecuting.base, currentlyExecuting.limit);
                 }
                 else {
                     _StdOut.putText("PID " + args + " killed.");
-                    memManager.clearSegment(currentlyExecuting.base, currentlyExecuting.limit);
+                    // memManager.clearSegment(currentlyExecuting.base, currentlyExecuting.limit);
                     currentlyExecuting = readyQueue.dequeue();
                     _CPU.updateCPU(currentlyExecuting);
                 }
@@ -512,8 +521,11 @@ var TSOS;
                     }
                 }
             }
-            if (pidFound) {
-                _StdOut.putText("PID " + args + " killed. ");
+            if (pidFound && currentlyExecuting.pid != args) {
+                _StdOut.putText("PID " + args + " killed.");
+            }
+            else {
+                _StdOut.putText("PID " + args + " does not exist.");
             }
         };
         return Shell;

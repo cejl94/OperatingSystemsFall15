@@ -108,6 +108,7 @@ export class memoryManager {
             //counters back to their originals. For now pid also sets back to 0
             _CPU.resetCPU();
 
+            currentlyExecuting = new pcb();
             Control.updateMemoryTable();
             Control.updateCPUtable();
             residentList = [];

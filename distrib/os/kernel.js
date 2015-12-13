@@ -89,6 +89,7 @@ var TSOS;
                 if (quantumCounter == quantum) {
                     _Kernel.krnTrace("SWITCHING FROM PID " + currentlyExecuting.pid + " TO PID " + readyQueue.index(0).pid);
                     TSOS.cpuScheduler.contextSwitch();
+                    TSOS.Control.updatePcbTable();
                 }
             }
             else {

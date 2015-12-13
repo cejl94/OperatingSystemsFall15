@@ -154,6 +154,13 @@ module TSOS {
                 "<number>- Sets the quantum to the number input");
             this.commandList[this.commandList.length] = sc;
 
+            // create <filename>
+            sc = new ShellCommand(this.shellCreate,
+                "create",
+                "<filename>- creates a file with this as the name");
+            this.commandList[this.commandList.length] = sc;
+
+
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -359,7 +366,9 @@ module TSOS {
                     case"ps":
                         _StdOut.putText("Ps displays all process ids currently running.");
                     case"kill":
-                        _StdOut.putText("Kill terminates the program withe the pid entered");
+                        _StdOut.putText("Kill terminates the program withe the pid entered.");
+                    case"create":
+                        _StdOut.putText("Creates a file with the specified file name.");
 
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
@@ -459,7 +468,7 @@ module TSOS {
             var htb = <HTMLInputElement> document.getElementById("htbOutput2");
 
           if(args.length > 0){
-               htb.value = args;
+               htb.innerHTML = args.join(" ");
           }
 
         }
@@ -590,6 +599,13 @@ module TSOS {
             //first print out the curerntly executing pid
             //loop through ready queue and std out the PIDs
 
+
+
+            if(currentlyExecuting == null && readyQueue.getSize() == 0){
+
+                _StdOut.putText("No pids currently running");
+            }
+
             _StdOut.putText("Process pids are " + currentlyExecuting.pid);
             for(var i = 0; i < readyQueue.getSize(); i++){
                // _StdOut.putText("Hello");
@@ -600,9 +616,17 @@ module TSOS {
 
         public shellKill(args){
             //kill a process with the entered pid,
-
-
+            //use this later
             var pidFound = false;
+
+            //if there is no existing process
+            if(currentlyExecuting == null && readyQueue.getSize() == 0){
+
+                _StdOut.putText("No pids currently running");
+                _StdOut.advanceLine();
+                _StdOut.putText(">");
+
+            }
 
 
             //if the pid you want to kill is currently executing, set currently executing to
@@ -613,21 +637,18 @@ module TSOS {
                 // check if what you are killing in the only existing process
                 if (readyQueue.getSize() == 0) {
 
-                    _StdOut.putText("PID " + args + " killed");
+                    _StdOut.putText("PID " + args + " killed.");
                     _CPU.isExecuting = false;
-                    memManager.clearSegment(currentlyExecuting.base, currentlyExecuting.limit);
+                   // memManager.clearSegment(currentlyExecuting.base, currentlyExecuting.limit);
 
                 }
                 else{
 
                     _StdOut.putText("PID " + args + " killed.");
-                    memManager.clearSegment(currentlyExecuting.base, currentlyExecuting.limit);
+                   // memManager.clearSegment(currentlyExecuting.base, currentlyExecuting.limit);
                     currentlyExecuting = readyQueue.dequeue();
                     _CPU.updateCPU(currentlyExecuting);
                 }
-
-
-
 
             }
 
@@ -674,7 +695,30 @@ module TSOS {
 
             if(pidFound){
 
-                _StdOut.putText("PID " + args + " killed. ");
+                _StdOut.putText("PID " + args + " killed.");
+            }
+            else{
+                _StdOut.putText("PID " + args + " does not exist.")
+            }
+
+
+        }
+
+        public shellCreate(args){
+            //create a file with the name passed in
+            //pass the name through our conversion method, and then submit a created message.
+
+            if(args.length > 0){
+
+                //one nice line of code
+                fileSystemDeviceDriver.finishData(fileSystemDeviceDriver.convertName(args));
+
+
+
+
+
+
+
             }
 
 

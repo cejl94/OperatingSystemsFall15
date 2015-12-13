@@ -224,12 +224,13 @@ module TSOS {
                         //then we want to switch to the next process, and NOT enqueue this process again
 
                         Control.updateCPUtable();
-                        Control.updatePcbTable();
+
 
                         this.updatePCB(_CPU);
                         //processTerminated = true;
                         this.isExecuting = false;
                         cpuScheduler.contextSwitchBreak();
+                        Control.updatePcbTable();
 
                         break;
                     case "EC":

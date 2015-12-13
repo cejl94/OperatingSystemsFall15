@@ -102,6 +102,7 @@ module TSOS {
                 if(quantumCounter == quantum){
                     _Kernel.krnTrace("SWITCHING FROM PID " + currentlyExecuting.pid + " TO PID " + readyQueue.index(0).pid);
                     cpuScheduler.contextSwitch();
+                    Control.updatePcbTable();
                 }
             } else {                      // If there are no interrupts and there is nothing being executed then just be idle. {
                 this.krnTrace("Idle");

@@ -63,6 +63,7 @@ var TSOS;
             //reset all tables that were updated, the ready queue and resident lsit, and set the PC, base, limit and index
             //counters back to their originals. For now pid also sets back to 0
             _CPU.resetCPU();
+            currentlyExecuting = new TSOS.pcb();
             TSOS.Control.updateMemoryTable();
             TSOS.Control.updateCPUtable();
             residentList = [];
