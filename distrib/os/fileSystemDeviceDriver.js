@@ -74,9 +74,9 @@ var TSOS;
             var newValue = "";
             for (var i = 0; i < value.length; i += 2) {
                 var hexCode = (value.charAt(i) + value.charAt(i + 1)).toString();
-                _Kernel.krnTrace("HEX CODE = " + hexCode);
+                // _Kernel.krnTrace("HEX CODE = " + hexCode);
                 var ascii = parseInt(hexCode, 16);
-                _Kernel.krnTrace("DECIMAL CODE = " + ascii);
+                //  _Kernel.krnTrace("DECIMAL CODE = " + ascii);
                 var string = String.fromCharCode(ascii);
                 newValue += string;
             }
@@ -95,17 +95,27 @@ var TSOS;
                 }
             }
         };
+        //checks to see if the filename matches an existing file, returns true if so and false otherwise
+        fileSystemDeviceDriver.checkDirectoryTrackForName = function (fileName) {
+            var fileN = this.convertStringToHex(fileName);
+            _Kernel.krnTrace("FILE NAME IN HEX IS " + fileN);
+            var zeroTrack = "0";
+            for (var s = 0; s < 8; s++) {
+                for (var b = 0; b < 8; b++) {
+                    var directoryKey = zeroTrack + s.toString() + b.toString();
+                    _Kernel.krnTrace("DIR TSB IS " + directoryKey);
+                    _Kernel.krnTrace("THIS IS WHAT IM TRYING TO MATCH " + sessionStorage.getItem(directoryKey).slice(4, fileName.length + 4));
+                    if (sessionStorage.getItem(directoryKey).slice(4, fileN.length + 4) == fileN) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        };
         //method to determine how many data blocks are needed given the length of a string to be written
         fileSystemDeviceDriver.determineNumberOfBlocks = function (value) {
             //Math.ceil(value.length/60);
             return Math.ceil(value.length / 60);
-        };
-        fileSystemDeviceDriver.findLastNeededDataBlockTSB = function (needed) {
-            var lastNeededBlock = "";
-            for (var i = 0; i < needed; i++) {
-                lastNeededBlock = this.checkDataTracks();
-            }
-            return lastNeededBlock;
         };
         //returns the TSB number for an open data block
         fileSystemDeviceDriver.checkDataTracks = function () {
@@ -143,6 +153,7 @@ var TSOS;
                 }
             }
         };
+        // returns the tsb of the directory block a file name is stored in
         fileSystemDeviceDriver.getDirectoryBlockTSB = function (fileName) {
             var nameToMatch = this.convertStringToHex(fileName);
             _Kernel.krnTrace("MATCH NAME IS " + nameToMatch);
@@ -216,14 +227,20 @@ var TSOS;
             //sessionStorage.setItem(firstDataBlock, "1"+ "000" + this.finishData(this.convertStringToHex(fileData.substr(startSubString))));
         };
         //Create a file with the name that was entered
-        fileSystemDeviceDriver.createFile = function (value) {
-            var defaultInUseTrackValue = "000000000000000000000000000000000000000000000000000000000000000";
-            //the key here is the TSB of the first free directory track
-            //the value here is the Meta bit being changed to 1, the TSB of the first open data block, and then the hex value of
-            //the name that was entered followed by the appropriate number of zeros.
-            sessionStorage.setItem(this.checkDirectoryTrack(), "1" + this.checkDataTracks() + this.finishData(this.convertStringToHex(value)));
-            //also, set the META bit of that data block to 1.
-            sessionStorage.setItem(this.checkDataTracks(), "1" + defaultInUseTrackValue + defaultInUseTrackValue + "0");
+        fileSystemDeviceDriver.createFile = function (fileName) {
+            if (this.checkDirectoryTrackForName(fileName) == true) {
+                _StdOut.putText("File " + fileName + " already exists");
+            }
+            else {
+                var defaultInUseTrackValue = "000000000000000000000000000000000000000000000000000000000000000";
+                //the key here is the TSB of the first free directory track
+                //the value here is the Meta bit being changed to 1, the TSB of the first open data block, and then the hex value of
+                //the name that was entered followed by the appropriate number of zeros.
+                sessionStorage.setItem(this.checkDirectoryTrack(), "1" + this.checkDataTracks() + this.finishData(this.convertStringToHex(fileName)));
+                //also, set the META bit of that data block to 1.
+                sessionStorage.setItem(this.checkDataTracks(), "1" + defaultInUseTrackValue + defaultInUseTrackValue + "0");
+                _StdOut.putText("File " + fileName + " was created successfully");
+            }
         };
         //writes the data specified in quotes to the file name that was entered
         fileSystemDeviceDriver.writeFile = function (fileName, fileData) {
@@ -249,6 +266,18 @@ var TSOS;
         fileSystemDeviceDriver.readFile = function (fileName) {
             _Kernel.krnTrace("READ STRING IS" + this.readChain(fileName));
             _StdOut.putText(this.readChain(fileName));
+        };
+        fileSystemDeviceDriver.ls = function () {
+            var zeroTrack = "0";
+            for (var s = 0; s < 8; s++) {
+                for (var b = 0; b < 8; b++) {
+                    var directoryKey = zeroTrack + s.toString() + b.toString();
+                    if (sessionStorage.getItem(directoryKey).charAt(1) == "1") {
+                        _StdOut.putText(this.convertHexToString(sessionStorage.getItem(directoryKey).slice(4)));
+                        _StdOut.advanceLine();
+                    }
+                }
+            }
         };
         return fileSystemDeviceDriver;
     })();

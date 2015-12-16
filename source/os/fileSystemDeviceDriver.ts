@@ -156,6 +156,39 @@ module TSOS{
 
         }
 
+        //checks to see if the filename matches an existing file, returns true if so and false otherwise
+        public static checkDirectoryTrackForName(fileName:string):boolean{
+
+            var fileN = this.convertStringToHex(fileName);
+            _Kernel.krnTrace("FILE NAME IN HEX IS " + fileN);
+            var zeroTrack = "0";
+            for (var s = 0; s < 8; s++) {
+                for (var b = 0; b < 8; b++) {
+
+                    var directoryKey = zeroTrack + s.toString() + b.toString();
+
+                    _Kernel.krnTrace("DIR TSB IS " + directoryKey);
+
+                    _Kernel.krnTrace("THIS IS WHAT IM TRYING TO MATCH " + sessionStorage.getItem(directoryKey).slice(4, fileName.length+4));
+
+                    if (sessionStorage.getItem(directoryKey).slice(4, fileN.length+4) == fileN)
+                    {
+
+                        return true;
+
+
+                    }
+
+
+                }
+
+
+            }
+            return false;
+
+
+        }
+
 
         //method to determine how many data blocks are needed given the length of a string to be written
         public static determineNumberOfBlocks(value:string):number{
@@ -344,16 +377,27 @@ module TSOS{
         }
 
         //Create a file with the name that was entered
-        public static createFile(value:string):void {
+        public static createFile(fileName:string):void {
 
-        var defaultInUseTrackValue = "000000000000000000000000000000000000000000000000000000000000000";
+            if(this.checkDirectoryTrackForName(fileName)==true){
 
-            //the key here is the TSB of the first free directory track
-            //the value here is the Meta bit being changed to 1, the TSB of the first open data block, and then the hex value of
-            //the name that was entered followed by the appropriate number of zeros.
-            sessionStorage.setItem(this.checkDirectoryTrack(), "1" + this.checkDataTracks() + this.finishData(this.convertStringToHex(value)));
-            //also, set the META bit of that data block to 1.
-            sessionStorage.setItem(this.checkDataTracks(), "1" + defaultInUseTrackValue + defaultInUseTrackValue + "0");
+                _StdOut.putText("File " + fileName + " already exists" );
+            }
+            else {
+
+
+                var defaultInUseTrackValue = "000000000000000000000000000000000000000000000000000000000000000";
+
+
+                //the key here is the TSB of the first free directory track
+                //the value here is the Meta bit being changed to 1, the TSB of the first open data block, and then the hex value of
+                //the name that was entered followed by the appropriate number of zeros.
+                sessionStorage.setItem(this.checkDirectoryTrack(), "1" + this.checkDataTracks() + this.finishData(this.convertStringToHex(fileName)));
+                //also, set the META bit of that data block to 1.
+                sessionStorage.setItem(this.checkDataTracks(), "1" + defaultInUseTrackValue + defaultInUseTrackValue + "0");
+
+                _StdOut.putText("File " + fileName+ " was created successfully");
+            }
 
         }
 
@@ -401,6 +445,27 @@ module TSOS{
 
 
         }
+
+        public static ls():void{
+
+            var zeroTrack = "0";
+            for (var s = 0; s < 8; s++) {
+                for (var b = 0; b < 8; b++) {
+
+                    var directoryKey = zeroTrack + s.toString() + b.toString();
+
+                   if(sessionStorage.getItem(directoryKey).charAt(1) == "1"){
+
+                       _StdOut.putText(this.convertHexToString(sessionStorage.getItem(directoryKey).slice(4)));
+                       _StdOut.advanceLine();
+                   }
+
+                }
+
+            }
+
+        }
+
 
 
     }

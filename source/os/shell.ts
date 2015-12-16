@@ -184,6 +184,11 @@ module TSOS {
                 "- Resets file system and disk");
             this.commandList[this.commandList.length] = sc;
 
+            //ls
+            sc = new ShellCommand(this.shellLS,
+                "ls",
+                "- Lists all files");
+            this.commandList[this.commandList.length] = sc;
 
             //
             // Display the initial prompt.
@@ -401,6 +406,8 @@ module TSOS {
                         _StdOut.putText("Delete deletes a file with the specified name.");
                     case"format":
                         _StdOut.putText("Format resets the file system/disk.");
+                    case"ls":
+                        _StdOut.putText("Lists all files.");
 
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
@@ -730,9 +737,9 @@ module TSOS {
 
 
 
-                _Kernel.krnTrace("This is being run");
+               // _Kernel.krnTrace("This is being run");
                 fileSystemDeviceDriver.createFile(args.join());
-                _StdOut.putText("File " + args.join()+ " was created successfully");
+
                 Control.updateFileSystemTable();
 
             }
@@ -824,6 +831,15 @@ module TSOS {
                 _StdOut.putText("Hard Drive Formatted.")
                 fileSystemDeviceDriver.format();
                 Control.updateFileSystemTable();
+
+
+        }
+
+        public shellLS(args){
+
+            //_StdOut.putText("Files:");
+            //_StdOut.advanceLine();
+            fileSystemDeviceDriver.ls();
 
 
         }

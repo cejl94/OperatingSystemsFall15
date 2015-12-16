@@ -102,6 +102,9 @@ var TSOS;
             //format
             sc = new TSOS.ShellCommand(this.shellFormat, "format", "- Resets file system and disk");
             this.commandList[this.commandList.length] = sc;
+            //ls
+            sc = new TSOS.ShellCommand(this.shellLS, "ls", "- Lists all files");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -307,6 +310,8 @@ var TSOS;
                         _StdOut.putText("Delete deletes a file with the specified name.");
                     case "format":
                         _StdOut.putText("Format resets the file system/disk.");
+                    case "ls":
+                        _StdOut.putText("Lists all files.");
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -545,9 +550,8 @@ var TSOS;
             //create a file with the name that was entered. makes use of
             //the methods in fileSystemDeviceDriver
             if (args.length > 0 && args.length <= 60) {
-                _Kernel.krnTrace("This is being run");
+                // _Kernel.krnTrace("This is being run");
                 TSOS.fileSystemDeviceDriver.createFile(args.join());
-                _StdOut.putText("File " + args.join() + " was created successfully");
                 TSOS.Control.updateFileSystemTable();
             }
             else {
@@ -603,6 +607,11 @@ var TSOS;
             _StdOut.putText("Hard Drive Formatted.");
             TSOS.fileSystemDeviceDriver.format();
             TSOS.Control.updateFileSystemTable();
+        };
+        Shell.prototype.shellLS = function (args) {
+            //_StdOut.putText("Files:");
+            //_StdOut.advanceLine();
+            TSOS.fileSystemDeviceDriver.ls();
         };
         return Shell;
     })();
