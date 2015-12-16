@@ -38,6 +38,7 @@ module TSOS {
             coreMemoryTable= <HTMLTableElement> document.getElementById("coreMemoryTable");
             cpuTable=<HTMLTableElement> document.getElementById("cpuTable");
             pcbReadyQueueTable=<HTMLTableElement> document.getElementById("pcbReadyQueueTable");
+            fileSystemTable=<HTMLTableElement> document.getElementById("fileSystemTable");
 
 
             // Enable the added-in canvas text functions (see canvastext.ts for provenance and details).
@@ -54,6 +55,7 @@ module TSOS {
             // Check for our testing and enrichment core, which
             // may be referenced here (from index.html) as function Glados().
             this.createMemoryTable();
+            this.createFileSystemTable();
             //this.createPcbTable();
             if (typeof Glados === "function") {
                 // function Glados() is here, so instantiate Her into
@@ -128,6 +130,8 @@ module TSOS {
             memManager = new memoryManager();//       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
             mem = new memory();
             mem.init();
+            fileSystemDD = new fileSystemDeviceDriver();
+            fileSystemDD.init();
 
 
 
@@ -186,6 +190,69 @@ module TSOS {
 
 
         }
+        public static updateMemoryTable():void{
+
+            //this will grab the opCode sitting in memory
+            var counter = 0;
+
+            //pretty much the same thing as initialize, just with different values
+
+            for(var x = 0; x < 96; x++){
+                var rows = <HTMLTableRowElement>coreMemoryTable.rows[x];
+                for(var y = 0; y < 9; y++){
+                    var cell = <HTMLElement>rows.cells[y];
+                    if(y== 0){
+                        var header = (x*8).toString(16);
+                        cell.innerHTML = "0x" + header;
+
+
+                    }
+                    else{
+                        cell.innerHTML = mem.opcodeMemory[counter];
+                        counter++;
+                    }
+
+                }
+
+            }
+        }
+
+        public static createFileSystemTable():void{
+
+
+            for(var x = 0; x < 256; x++){
+                var row = <HTMLTableRowElement>fileSystemTable.insertRow(x);
+
+                for(var columns = 0; columns < 2; columns++){
+                    var cell = row.insertCell(columns);
+                    if(columns ==0){
+                      cell.innerHTML = sessionStorage.key(x);
+                    }
+                    else{
+                        cell.innerHTML = sessionStorage.getItem(sessionStorage.key(x));
+                    }
+                }
+            }
+        }
+
+
+        public static updateFileSystemTable():void{
+
+
+            for(var x = 0; x < 256; x++){
+                var row = <HTMLTableRowElement>fileSystemTable.rows[x];
+
+                for(var columns = 0; columns < 2; columns++){
+                    var cell = <HTMLElement>row.cells[columns];
+                    if(columns ==0){
+                        cell.innerHTML = sessionStorage.key(x);
+                    }
+                    else{
+                        cell.innerHTML = sessionStorage.getItem(sessionStorage.key(x));
+                    }
+                }
+            }
+        }
 
        /* public static createPcbTable():void {
 
@@ -214,32 +281,7 @@ module TSOS {
 
         }*/
 
-        public static updateMemoryTable():void{
 
-            //this will grab the opCode sitting in memory
-            var counter = 0;
-
-            //pretty much the same thing as initialize, just with different values
-
-            for(var x = 0; x < 96; x++){
-                var rows = <HTMLTableRowElement>coreMemoryTable.rows[x];
-                for(var y = 0; y < 9; y++){
-                    var cell = <HTMLElement>rows.cells[y];
-                    if(y== 0){
-                        var header = (x*8).toString(16);
-                        cell.innerHTML = "0x" + header;
-
-
-                    }
-                    else{
-                        cell.innerHTML = mem.opcodeMemory[counter];
-                        counter++;
-                    }
-
-                }
-
-            }
-        }
 
 
 

@@ -29,9 +29,11 @@ var _CPU: TSOS.Cpu;  // Utilize TypeScript's type annotation system to ensure th
 var mem: TSOS.memory;
 var memManager: TSOS.memoryManager;
 var cpuScheduler: TSOS.cpuScheduler;
+var fileSystemDD: TSOS.fileSystemDeviceDriver;
 var coreMemoryTable: HTMLTableElement;
 var pcbReadyQueueTable: HTMLTableElement;
 var cpuTable: HTMLTableElement;
+var fileSystemTable: HTMLTableElement;
 var prosBlock: TSOS.pcb;
 var _OSclock: number = 0;  // Page 23.
 

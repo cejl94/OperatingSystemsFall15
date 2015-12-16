@@ -91,3 +91,10 @@ h3 {
   width: 400px;"
 
 }
+
+#fileSystem{
+  overflow-x: auto;
+  overflow-y: auto;
+  height:250px;
+  width: 400px;"
+}

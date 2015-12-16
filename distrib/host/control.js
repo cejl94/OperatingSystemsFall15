@@ -35,6 +35,7 @@ var TSOS;
             coreMemoryTable = document.getElementById("coreMemoryTable");
             cpuTable = document.getElementById("cpuTable");
             pcbReadyQueueTable = document.getElementById("pcbReadyQueueTable");
+            fileSystemTable = document.getElementById("fileSystemTable");
             // Enable the added-in canvas text functions (see canvastext.ts for provenance and details).
             TSOS.CanvasTextFunctions.enable(_DrawingContext); // Text functionality is now built in to the HTML5 canvas. But this is old-school, and fun, so we'll keep it.
             // Clear the log text box.
@@ -46,6 +47,7 @@ var TSOS;
             // Check for our testing and enrichment core, which
             // may be referenced here (from index.html) as function Glados().
             this.createMemoryTable();
+            this.createFileSystemTable();
             //this.createPcbTable();
             if (typeof Glados === "function") {
                 // function Glados() is here, so instantiate Her into
@@ -108,6 +110,8 @@ var TSOS;
             memManager = new TSOS.memoryManager(); //       There's more to do, like dealing with scheduling and such, but this would be a start. Pretty cool.
             mem = new TSOS.memory();
             mem.init();
+            fileSystemDD = new TSOS.fileSystemDeviceDriver();
+            fileSystemDD.init();
             // ... then set the host clock pulse ...
             _hardwareClockID = setInterval(TSOS.Devices.hostClockPulse, CPU_CLOCK_INTERVAL);
             // .. and call the OS Kernel Bootstrap routine.
@@ -149,6 +153,53 @@ var TSOS;
                 }
             }
         };
+        Control.updateMemoryTable = function () {
+            //this will grab the opCode sitting in memory
+            var counter = 0;
+            //pretty much the same thing as initialize, just with different values
+            for (var x = 0; x < 96; x++) {
+                var rows = coreMemoryTable.rows[x];
+                for (var y = 0; y < 9; y++) {
+                    var cell = rows.cells[y];
+                    if (y == 0) {
+                        var header = (x * 8).toString(16);
+                        cell.innerHTML = "0x" + header;
+                    }
+                    else {
+                        cell.innerHTML = mem.opcodeMemory[counter];
+                        counter++;
+                    }
+                }
+            }
+        };
+        Control.createFileSystemTable = function () {
+            for (var x = 0; x < 256; x++) {
+                var row = fileSystemTable.insertRow(x);
+                for (var columns = 0; columns < 2; columns++) {
+                    var cell = row.insertCell(columns);
+                    if (columns == 0) {
+                        cell.innerHTML = sessionStorage.key(x);
+                    }
+                    else {
+                        cell.innerHTML = sessionStorage.getItem(sessionStorage.key(x));
+                    }
+                }
+            }
+        };
+        Control.updateFileSystemTable = function () {
+            for (var x = 0; x < 256; x++) {
+                var row = fileSystemTable.rows[x];
+                for (var columns = 0; columns < 2; columns++) {
+                    var cell = row.cells[columns];
+                    if (columns == 0) {
+                        cell.innerHTML = sessionStorage.key(x);
+                    }
+                    else {
+                        cell.innerHTML = sessionStorage.getItem(sessionStorage.key(x));
+                    }
+                }
+            }
+        };
         /* public static createPcbTable():void {
  
              //32 rows(768/8) = 96
@@ -175,25 +226,6 @@ var TSOS;
  
  
          }*/
-        Control.updateMemoryTable = function () {
-            //this will grab the opCode sitting in memory
-            var counter = 0;
-            //pretty much the same thing as initialize, just with different values
-            for (var x = 0; x < 96; x++) {
-                var rows = coreMemoryTable.rows[x];
-                for (var y = 0; y < 9; y++) {
-                    var cell = rows.cells[y];
-                    if (y == 0) {
-                        var header = (x * 8).toString(16);
-                        cell.innerHTML = "0x" + header;
-                    }
-                    else {
-                        cell.innerHTML = mem.opcodeMemory[counter];
-                        counter++;
-                    }
-                }
-            }
-        };
         Control.updateCPUtable = function () {
             var rows = cpuTable.rows[1];
             var cells = rows.cells[0];

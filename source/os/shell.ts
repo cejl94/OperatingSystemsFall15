@@ -154,6 +154,37 @@ module TSOS {
                 "<number>- Sets the quantum to the number input");
             this.commandList[this.commandList.length] = sc;
 
+            // create <filename>
+            sc = new ShellCommand(this.shellCreateFile,
+                "create",
+                "<filename>- Creates a file with the entered name");
+            this.commandList[this.commandList.length] = sc;
+
+            //read <filename>
+            sc = new ShellCommand(this.shellReadFile,
+                "read",
+                "<filename>- Reads a file with the entered name");
+            this.commandList[this.commandList.length] = sc;
+
+            //write <filename> <string>
+            sc = new ShellCommand(this.shellWriteFile,
+                "write",
+                "<filename> \"data\"- Writes the string to a file with the entered name");
+            this.commandList[this.commandList.length] = sc;
+
+            //delete <filename>
+            sc = new ShellCommand(this.shellDeleteFile,
+                "delete",
+                "<filename>- Deletes a file with the entered name");
+            this.commandList[this.commandList.length] = sc;
+
+            //format
+            sc = new ShellCommand(this.shellFormat,
+                "format",
+                "- Resets file system and disk");
+            this.commandList[this.commandList.length] = sc;
+
+
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -360,6 +391,16 @@ module TSOS {
                         _StdOut.putText("Ps displays all process ids currently running.");
                     case"kill":
                         _StdOut.putText("Kill terminates the program withe the pid entered");
+                    case"create":
+                        _StdOut.putText("Create creates a file with the specified name.");
+                    case"read":
+                        _StdOut.putText("Read reads a file with the specified name.");
+                    case"write":
+                        _StdOut.putText("Write writes a string to a file with the specified name.");
+                    case"delete":
+                        _StdOut.putText("Delete deletes a file with the specified name.");
+                    case"format":
+                        _StdOut.putText("Format resets the file system/disk.");
 
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
@@ -676,6 +717,113 @@ module TSOS {
 
                 _StdOut.putText("PID " + args + " killed. ");
             }
+
+
+        }
+
+        public shellCreateFile(args){
+
+            //create a file with the name that was entered. makes use of
+            //the methods in fileSystemDeviceDriver
+
+            if(args.length > 0 && args.length <=60){
+
+
+
+                _Kernel.krnTrace("This is being run");
+                fileSystemDeviceDriver.createFile(args.join());
+                _StdOut.putText("File " + args.join()+ " was created successfully");
+                Control.updateFileSystemTable();
+
+            }
+            else{
+                _StdOut.putText("File name either nonexistent or too long.");
+
+            }
+        }
+        public shellReadFile(args){
+
+            //create a file with the name that was entered. makes use of
+            //the methods in fileSystemDeviceDriver
+
+            if(args.length > 0){
+
+
+                _Kernel.krnTrace("Read File is being run");
+                fileSystemDeviceDriver.readFile(args.join());
+                _StdOut.putText("File " + args.join()+ " was read successfully");
+                Control.updateFileSystemTable();
+
+            }
+        }
+        public shellWriteFile(args){
+
+            //create a file with the name that was entered. makes use of
+            //the methods in fileSystemDeviceDriver
+
+            if(args.length >= 2){
+
+
+                _Kernel.krnTrace("Write file is being run");
+
+                _Kernel.krnTrace("ARGS ARE " + args[0] + " " + args[1]);
+
+                //for the second arguement, add all its characters into a string
+
+                var fileData = "";
+                for(var i = 1; i < args.length; i++){
+                    fileData+= args[i] + " ";
+
+
+                }
+                _Kernel.krnTrace(" input is" + fileData);
+
+                //subtract 2 from length because of the extra space added above
+                if(fileData.charAt(0) == "\"" && fileData.charAt(fileData.length - 2) == "\"" ){
+
+
+                    fileSystemDeviceDriver.writeFile(args[0], fileData.slice(1, fileData.length -2));
+                    _StdOut.putText("File " + args[0] + " was written successfully");
+                }
+                else{
+                    _StdOut.putText("Error, data was not in quotes");
+                }
+
+
+                Control.updateFileSystemTable();
+
+            }
+
+        }
+        public shellDeleteFile(args){
+
+            //create a file with the name that was entered. makes use of
+            //the methods in fileSystemDeviceDriver
+
+            if(args.length > 0){
+
+
+                _Kernel.krnTrace("Delete file is being run");
+
+                fileSystemDeviceDriver.deleteFile(args.join());
+
+
+                _StdOut.putText("File " + args.join()+ " was deleted successfully");
+                Control.updateFileSystemTable();
+
+            }
+        }
+        public shellFormat(args){
+
+            //create a file with the name that was entered. makes use of
+            //the methods in fileSystemDeviceDriver
+
+
+
+
+                _StdOut.putText("Hard Drive Formatted.")
+                fileSystemDeviceDriver.format();
+                Control.updateFileSystemTable();
 
 
         }

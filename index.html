@@ -22,6 +22,7 @@
    <script type="text/javascript" src="distrib/os/console.js"></script>
    <script type="text/javascript" src="distrib/os/deviceDriver.js"></script>
    <script type="text/javascript" src="distrib/os/deviceDriverKeyboard.js"></script>
+    <script type="text/javascript" src="distrib/os/fileSystemDeviceDriver.js"></script>
    <script type="text/javascript" src="distrib/os/memoryManager.js"></script>
    <script type="text/javascript" src="distrib/os/pcb.js"></script>
    <script type="text/javascript" src="distrib/os/queue.js"></script>
@@ -34,7 +35,7 @@
    <!-- Other Routines -->
    <script type="text/javascript" src="distrib/utils.js"></script>
    <!-- Uncomment this line below to enable GLaDOS testing -->
-   <script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script></head>
+   <!--<script type="text/javascript" src="http://www.labouseur.com/courses/os/projects/glados.js"></script></head> -->
 
 <body onload="onDocumentLoad()">
 
@@ -239,6 +240,16 @@
                     <td> 0 </td>
                 </tr>
                 </tbody>
+
+            </table>
+        </div>
+
+        <div id="fileSystem" >
+            <label style="color: goldenrod;">
+                Hard Drive
+            </label>
+            <table id="fileSystemTable" style="background-color: black; color: goldenrod; width: 400px; border: 1px solid green;"  >
+
 
             </table>
         </div>
