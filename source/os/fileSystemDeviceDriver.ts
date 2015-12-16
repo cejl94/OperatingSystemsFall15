@@ -95,7 +95,7 @@ module TSOS{
             for(var i = 0; i < value.length; i++){
 
                 //_Kernel.krnTrace("char = " + value.toString().charAt(i));
-                var charCode = parseInt(value.charAt(i));
+               // var charCode = parseInt(value.charAt(i));
                // _Kernel.krnTrace("charcode= " + value.toString().charCodeAt(i));
 
                 var hex = value.toString().charCodeAt(i).toString(16);
@@ -113,9 +113,17 @@ module TSOS{
 
         public static convertHexToString(value:string):string{
             var newValue="";
-            for(var i = 0; i < value.length; i+=2){
-                var string = value.toString().charAt(i) + value.toString().charAt(i+1);
-                newValue+= string.toString();
+            for(var i = 0; i < value.length; i+=2) {
+                var hexCode = (value.charAt(i) + value.charAt(i + 1)).toString();
+               // _Kernel.krnTrace("HEX CODE = " + hexCode);
+                var ascii = parseInt(hexCode, 16);
+
+              //  _Kernel.krnTrace("DECIMAL CODE = " + ascii);
+
+                var string = String.fromCharCode(ascii);
+
+
+                newValue+= string;
             }
 
             return newValue;
@@ -162,18 +170,6 @@ module TSOS{
 
         }
 
-        public static findLastNeededDataBlockTSB(needed:number):string{
-
-            var lastNeededBlock = "";
-            for(var i = 0; i < needed; i++){
-
-                lastNeededBlock = this.checkDataTracks();
-
-
-            }
-
-            return lastNeededBlock;
-        }
 
         //returns the TSB number for an open data block
         public static checkDataTracks():string {
@@ -239,6 +235,7 @@ module TSOS{
 
         }
 
+        // returns the tsb of the directory block a file name is stored in
         public static getDirectoryBlockTSB(fileName:string):string{
 
             var nameToMatch = this.convertStringToHex(fileName);
@@ -337,9 +334,9 @@ module TSOS{
             }
 
             data+= sessionStorage.getItem(firstDataBlock).slice(4);
-            this.convertHexToString(data);
+            var ascii = this.convertHexToString(data);
 
-            return data;
+            return ascii;
             //sessionStorage.setItem(firstDataBlock, "1"+ "000" + this.finishData(this.convertStringToHex(fileData.substr(startSubString))));
 
 
@@ -400,6 +397,7 @@ module TSOS{
 
             _Kernel.krnTrace("READ STRING IS"  + this.readChain(fileName));
             _StdOut.putText(this.readChain(fileName));
+
 
 
         }

@@ -560,7 +560,7 @@ var TSOS;
             if (args.length > 0) {
                 _Kernel.krnTrace("Read File is being run");
                 TSOS.fileSystemDeviceDriver.readFile(args.join());
-                _StdOut.putText("File " + args.join() + " was read successfully");
+                //_StdOut.putText("File " + args.join()+ " was read successfully");
                 TSOS.Control.updateFileSystemTable();
             }
         };

@@ -751,7 +751,7 @@ module TSOS {
 
                 _Kernel.krnTrace("Read File is being run");
                 fileSystemDeviceDriver.readFile(args.join());
-                _StdOut.putText("File " + args.join()+ " was read successfully");
+                //_StdOut.putText("File " + args.join()+ " was read successfully");
                 Control.updateFileSystemTable();
 
             }

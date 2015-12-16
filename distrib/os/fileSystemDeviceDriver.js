@@ -61,7 +61,7 @@ var TSOS;
             var newValue = "";
             for (var i = 0; i < value.length; i++) {
                 //_Kernel.krnTrace("char = " + value.toString().charAt(i));
-                var charCode = parseInt(value.charAt(i));
+                // var charCode = parseInt(value.charAt(i));
                 // _Kernel.krnTrace("charcode= " + value.toString().charCodeAt(i));
                 var hex = value.toString().charCodeAt(i).toString(16);
                 // _Kernel.krnTrace("Value of hex = " + hex);
@@ -73,8 +73,12 @@ var TSOS;
         fileSystemDeviceDriver.convertHexToString = function (value) {
             var newValue = "";
             for (var i = 0; i < value.length; i += 2) {
-                var string = value.toString().charAt(i) + value.toString().charAt(i + 1);
-                newValue += string.toString();
+                var hexCode = (value.charAt(i) + value.charAt(i + 1)).toString();
+                _Kernel.krnTrace("HEX CODE = " + hexCode);
+                var ascii = parseInt(hexCode, 16);
+                _Kernel.krnTrace("DECIMAL CODE = " + ascii);
+                var string = String.fromCharCode(ascii);
+                newValue += string;
             }
             return newValue;
         };
@@ -207,8 +211,8 @@ var TSOS;
                 firstDataBlock = this.getNextTSB(firstDataBlock);
             }
             data += sessionStorage.getItem(firstDataBlock).slice(4);
-            this.convertHexToString(data);
-            return data;
+            var ascii = this.convertHexToString(data);
+            return ascii;
             //sessionStorage.setItem(firstDataBlock, "1"+ "000" + this.finishData(this.convertStringToHex(fileData.substr(startSubString))));
         };
         //Create a file with the name that was entered
