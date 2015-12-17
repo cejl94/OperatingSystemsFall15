@@ -19,11 +19,12 @@ module TSOS {
                     public base: number = 0,
                     public limit: number = 0,
                     public limitCounter: number = 0,
+                    public priority: number = 0,
                     public isExecuting: boolean = false) {
 
         }
 
-        public init(pid, base, limit, PC): void {
+        public init(pid, base, limit, PC, priority): void {
             this.state = 0;
             this.pid = pid;
             this.PC = PC;
@@ -34,6 +35,7 @@ module TSOS {
             this.base = base;
             this.limit = limit;
             this.limitCounter = 0;
+            this.priority = priority;
             this.isExecuting = false;
 
         }

@@ -105,6 +105,12 @@ var TSOS;
             //ls
             sc = new TSOS.ShellCommand(this.shellLS, "ls", "- Lists all files");
             this.commandList[this.commandList.length] = sc;
+            //setschedule <algorithm>
+            sc = new TSOS.ShellCommand(this.shellSetSchedule, "setschedule", "<algorithm> - Sets the cpu scheduling algorithm.");
+            this.commandList[this.commandList.length] = sc;
+            //getschedule
+            sc = new TSOS.ShellCommand(this.shellGetSchedule, "getschedule", "- Gets the cpu scheduling algorithm.");
+            this.commandList[this.commandList.length] = sc;
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -312,6 +318,10 @@ var TSOS;
                         _StdOut.putText("Format resets the file system/disk.");
                     case "ls":
                         _StdOut.putText("Lists all files.");
+                    case "setschedule":
+                        _StdOut.putText("Sets the CPU scheduling algorithm.");
+                    case "getschedule":
+                        _StdOut.putText("Gets the CPU scheduling algorithm.");
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
                         _StdOut.putText("No manual entry for " + args[0] + ".");
@@ -412,6 +422,7 @@ var TSOS;
         };
         // checks the user program input for hex characters and spaces only
         Shell.prototype.shellLoad = function (args) {
+            _Kernel.krnTrace("Priority is " + args[0]);
             var userInput = document.getElementById("taProgramInput");
             var toArray = userInput.value;
             var counter = 0;
@@ -426,7 +437,7 @@ var TSOS;
             }
             if (counter == toArray.length) {
                 var instructions = toArray.replace(/[\s]/g, "");
-                memManager.loadInputToMemory(instructions);
+                memManager.loadInputToMemory(instructions, args[0]);
             }
             else {
                 _StdOut.putText("You have entered an incorrect digit.");
@@ -461,6 +472,13 @@ var TSOS;
             }
         };
         Shell.prototype.shellRunAll = function (args) {
+            //if priority is the scheduling algorithm, sort the resident list.
+            if (premPriority) {
+                residentList = TSOS.cpuScheduler.mergeSort(residentList);
+                for (var i = 0; i < residentList.length; i++) {
+                    _Kernel.krnTrace("PRIORITY RESIDENT LIST FIRST ELEMENT IS " + residentList[i].priority);
+                }
+            }
             //while the resident list contains things, enqueue all of them into the ready Queue
             _StdOut.putText("length of the list is " + residentList.length);
             var counter = 0;
@@ -612,6 +630,39 @@ var TSOS;
             //_StdOut.putText("Files:");
             //_StdOut.advanceLine();
             TSOS.fileSystemDeviceDriver.ls();
+        };
+        Shell.prototype.shellSetSchedule = function (args) {
+            if (args.length > 0) {
+                if (args == "rr") {
+                    roundRobin = true;
+                    fcfs = false;
+                    premPriority = false;
+                    _StdOut.putText("Scheduling algorithm set to round robin.");
+                }
+                if (args == "fcfs") {
+                    fcfs = true;
+                    roundRobin = false;
+                    premPriority = false;
+                    _Kernel.krnTrace("Scheduling algorithm set to first come first serve.");
+                }
+                if (args == "priority") {
+                    premPriority = true;
+                    roundRobin = false;
+                    fcfs = false;
+                    _StdOut.putText("Scheduling algorithm set to non-preemptive priority.");
+                }
+            }
+        };
+        Shell.prototype.shellGetSchedule = function (args) {
+            if (roundRobin) {
+                _StdOut.putText("Current scheduling algorithm is round robin.");
+            }
+            if (fcfs) {
+                _StdOut.putText("Current scheduling algorithm is first come first serve.");
+            }
+            if (premPriority) {
+                _StdOut.putText("Current scheduling algorithm is non-preemptive priority.");
+            }
         };
         return Shell;
     })();

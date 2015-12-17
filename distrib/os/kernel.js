@@ -84,11 +84,13 @@ var TSOS;
                 _CPU.cycle();
                 //_CPU.printCPU();
                 currentlyExecuting.limitCounter += 1;
-                quantumCounter += 1;
-                // _Kernel.krnTrace("quantum is " + quantum + " and quantum counter is" + quantumCounter);
-                if (quantumCounter == quantum) {
-                    _Kernel.krnTrace("SWITCHING FROM PID " + currentlyExecuting.pid + " TO PID " + readyQueue.index(0).pid);
-                    TSOS.cpuScheduler.contextSwitch();
+                if (roundRobin) {
+                    quantumCounter += 1;
+                    // _Kernel.krnTrace("quantum is " + quantum + " and quantum counter is" + quantumCounter);
+                    if (quantumCounter == quantum) {
+                        _Kernel.krnTrace("SWITCHING FROM PID " + currentlyExecuting.pid + " TO PID " + readyQueue.index(0).pid);
+                        TSOS.cpuScheduler.contextSwitch();
+                    }
                 }
             }
             else {

@@ -35,6 +35,9 @@ var pcbReadyQueueTable: HTMLTableElement;
 var cpuTable: HTMLTableElement;
 var fileSystemTable: HTMLTableElement;
 var prosBlock: TSOS.pcb;
+var roundRobin:boolean = true;
+var fcfs:boolean = false;
+var premPriority:boolean = false;
 var _OSclock: number = 0;  // Page 23.
 
 var _Mode: number = 0;     // (currently unused)  0 = Kernel Mode, 1 = User Mode.  See page 21.

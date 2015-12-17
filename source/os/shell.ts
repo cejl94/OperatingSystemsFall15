@@ -190,6 +190,18 @@ module TSOS {
                 "- Lists all files");
             this.commandList[this.commandList.length] = sc;
 
+            //setschedule <algorithm>
+            sc = new ShellCommand(this.shellSetSchedule,
+                "setschedule",
+                "<algorithm> - Sets the cpu scheduling algorithm.");
+            this.commandList[this.commandList.length] = sc;
+
+            //getschedule
+            sc = new ShellCommand(this.shellGetSchedule,
+                "getschedule",
+                "- Gets the cpu scheduling algorithm.");
+            this.commandList[this.commandList.length] = sc;
+
             //
             // Display the initial prompt.
             this.putPrompt();
@@ -408,6 +420,12 @@ module TSOS {
                         _StdOut.putText("Format resets the file system/disk.");
                     case"ls":
                         _StdOut.putText("Lists all files.");
+                    case"setschedule":
+                        _StdOut.putText("Sets the CPU scheduling algorithm.");
+                    case"getschedule":
+                        _StdOut.putText("Gets the CPU scheduling algorithm.");
+
+
 
                     // TODO: Make descriptive MANual page entries for the the rest of the shell commands here.
                     default:
@@ -513,6 +531,8 @@ module TSOS {
         }
         // checks the user program input for hex characters and spaces only
         public shellLoad(args){
+
+            _Kernel.krnTrace("Priority is " + args[0]);
             var userInput = <HTMLInputElement> document.getElementById("taProgramInput");
             var toArray = userInput.value;
             var counter = 0;
@@ -534,7 +554,7 @@ module TSOS {
                 if(counter == toArray.length){
 
                     var instructions = toArray.replace(/[\s]/g, "");
-                        memManager.loadInputToMemory(instructions);
+                        memManager.loadInputToMemory(instructions, args[0]);
 
 
 
@@ -599,6 +619,15 @@ module TSOS {
 
         public shellRunAll(args){
 
+            //if priority is the scheduling algorithm, sort the resident list.
+            if(premPriority) {
+
+                residentList = cpuScheduler.mergeSort(residentList);
+                for(var i = 0; i < residentList.length; i++){
+                    _Kernel.krnTrace("PRIORITY RESIDENT LIST FIRST ELEMENT IS " + residentList[i].priority);
+
+                }
+            }
             //while the resident list contains things, enqueue all of them into the ready Queue
             _StdOut.putText("length of the list is " + residentList.length);
             var counter = 0;
@@ -841,6 +870,60 @@ module TSOS {
             //_StdOut.advanceLine();
             fileSystemDeviceDriver.ls();
 
+
+        }
+
+        public shellSetSchedule(args){
+
+
+            if (args.length >0){
+
+                if(args == "rr"){
+                    roundRobin= true;
+                    fcfs=false;
+                    premPriority=false;
+                    _StdOut.putText("Scheduling algorithm set to round robin.");
+                }
+                if(args =="fcfs"){
+
+
+                    fcfs=true;
+                    roundRobin= false;
+                    premPriority=false;
+                    _Kernel.krnTrace("Scheduling algorithm set to first come first serve.");
+
+                }
+                if(args == "priority"){
+                    premPriority = true;
+                    roundRobin = false;
+                    fcfs = false;
+                    _StdOut.putText("Scheduling algorithm set to non-preemptive priority.");
+
+                }
+
+            }
+        }
+
+        public shellGetSchedule(args){
+
+
+
+
+
+                if(roundRobin){
+
+                    _StdOut.putText("Current scheduling algorithm is round robin.");
+                }
+                if(fcfs){
+
+                    _StdOut.putText("Current scheduling algorithm is first come first serve.");
+
+                }
+                if(premPriority){
+
+                    _StdOut.putText("Current scheduling algorithm is non-preemptive priority.");
+
+                }
 
         }
 

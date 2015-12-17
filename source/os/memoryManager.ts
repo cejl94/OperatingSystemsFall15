@@ -9,7 +9,7 @@ export class memoryManager {
 
 // this method will actually load the user input into memory
 
-        public loadInputToMemory(instructions: string):void {
+        public loadInputToMemory(instructions: string, priority: number):void {
             //_StdOut.putText("memoryplace LOoaded, pid = " + this.memoryPlace);
 
 
@@ -29,6 +29,8 @@ export class memoryManager {
 
                // first check if you're trying to add into memory that doesnt exist
                if (this.limitReg > 767) {
+
+                   // load a program to the disk in this space.
                    _StdOut.putText("Error: Not enough memory for program. Don't load anything else, idiot.");
 
                }
@@ -55,8 +57,10 @@ export class memoryManager {
 
                    prosBlock = new pcb();
                    //given that load increases the base and the limit after the load is complete, we must get the previous base and limit
-                   prosBlock.init(pid, this.baseReg, this.limitReg, this.counter);
+                   prosBlock.init(pid, this.baseReg, this.limitReg, this.counter, priority);
                    _StdOut.putText("Program successfully loaded, pid = " + prosBlock.pid);
+                   _Kernel.krnTrace("Program successfully loaded, PRIORITY = " + prosBlock.priority.toString());
+
                    _StdOut.advanceLine();
                    _StdOut.putText("Base = " + prosBlock.base + " Limit = " + prosBlock.limit);
                    //_StdOut.putText("Memory base = " + prosBlock.base + " Memory Limit = " + prosBlock.limit );
@@ -116,7 +120,7 @@ export class memoryManager {
             this.baseReg = 0;
             this.limitReg = 255;
             this.memoryPlace = this.baseReg;
-            pid = 0;
+
 
         }
 

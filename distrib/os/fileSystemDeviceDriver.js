@@ -94,17 +94,31 @@ var TSOS;
                     }
                 }
             }
+            return "None";
+        };
+        fileSystemDeviceDriver.checkDataTracksForSpace = function () {
+            for (var t = 1; t < 4; t++) {
+                for (var s = 0; s < 8; s++) {
+                    for (var b = 0; b < 8; b++) {
+                        var dataTrackKey = t.toString() + s.toString() + b.toString();
+                        if (sessionStorage.getItem(dataTrackKey).charAt(0) == "0") {
+                            return dataTrackKey;
+                        }
+                    }
+                }
+            }
+            return "None";
         };
         //checks to see if the filename matches an existing file, returns true if so and false otherwise
         fileSystemDeviceDriver.checkDirectoryTrackForName = function (fileName) {
             var fileN = this.convertStringToHex(fileName);
-            _Kernel.krnTrace("FILE NAME IN HEX IS " + fileN);
+            _Kernel.krnTrace("FILE NAME IN HEX LENGTH IS " + fileN.length);
             var zeroTrack = "0";
             for (var s = 0; s < 8; s++) {
                 for (var b = 0; b < 8; b++) {
                     var directoryKey = zeroTrack + s.toString() + b.toString();
-                    _Kernel.krnTrace("DIR TSB IS " + directoryKey);
-                    _Kernel.krnTrace("THIS IS WHAT IM TRYING TO MATCH " + sessionStorage.getItem(directoryKey).slice(4, fileName.length + 4));
+                    // _Kernel.krnTrace("DIR TSB IS " + directoryKey);
+                    _Kernel.krnTrace("THIS IS WHAT IM TRYING TO MATCH " + sessionStorage.getItem(directoryKey).slice(4, fileN.length + 4));
                     if (sessionStorage.getItem(directoryKey).slice(4, fileN.length + 4) == fileN) {
                         return true;
                     }
@@ -231,6 +245,9 @@ var TSOS;
             if (this.checkDirectoryTrackForName(fileName) == true) {
                 _StdOut.putText("File " + fileName + " already exists");
             }
+            else if (this.checkDirectoryTrack() == "None") {
+                _StdOut.putText("No space available");
+            }
             else {
                 var defaultInUseTrackValue = "000000000000000000000000000000000000000000000000000000000000000";
                 //the key here is the TSB of the first free directory track
@@ -244,28 +261,46 @@ var TSOS;
         };
         //writes the data specified in quotes to the file name that was entered
         fileSystemDeviceDriver.writeFile = function (fileName, fileData) {
-            //we want the TSB of the first data track block associated with the file
-            // then we want to take the string we entered, convert it to hex,
-            // and set the item value to that new string entered.
-            //if the string is greater than 120 characters(hex is 2 characters per byte, 60 bytes),
-            //then find the next open block, and set the value to the sliced string of the original.
-            // if the fileData is not longer than 60 bytes, then dont worry about chaining to a new data track
-            if (this.convertStringToHex(fileData).length <= 60) {
-                sessionStorage.setItem(this.checkDirectoryForNameDataTSB(fileName), "1" + "000" + this.finishData(this.convertStringToHex(fileData)));
+            if (this.checkDirectoryTrackForName(fileName) == false) {
+                _StdOut.putText("File " + fileName + " does not exist.");
+            }
+            else if (this.checkDataTracksForSpace() == "None") {
+                _StdOut.putText("No space available.");
             }
             else {
-                this.setChain(fileData, fileName);
-                this.writeChain(fileData, fileName);
+                //we want the TSB of the first data track block associated with the file
+                // then we want to take the string we entered, convert it to hex,
+                // and set the item value to that new string entered.
+                //if the string is greater than 120 characters(hex is 2 characters per byte, 60 bytes),
+                //then find the next open block, and set the value to the sliced string of the original.
+                // if the fileData is not longer than 60 bytes, then dont worry about chaining to a new data track
+                if (this.convertStringToHex(fileData).length <= 60) {
+                    sessionStorage.setItem(this.checkDirectoryForNameDataTSB(fileName), "1" + "000" + this.finishData(this.convertStringToHex(fileData)));
+                }
+                else {
+                    this.setChain(fileData, fileName);
+                    this.writeChain(fileData, fileName);
+                }
             }
         };
         fileSystemDeviceDriver.deleteFile = function (fileName) {
-            var defaultStorageValue = "0000000000000000000000000000000000000000000000000000000000000000";
-            this.deleteChain(fileName);
-            sessionStorage.setItem(this.getDirectoryBlockTSB(fileName), defaultStorageValue + defaultStorageValue);
+            if (this.checkDirectoryTrackForName(fileName) == false) {
+                _StdOut.putText("File " + fileName + " does not exist.");
+            }
+            else {
+                var defaultStorageValue = "0000000000000000000000000000000000000000000000000000000000000000";
+                this.deleteChain(fileName);
+                sessionStorage.setItem(this.getDirectoryBlockTSB(fileName), defaultStorageValue + defaultStorageValue);
+            }
         };
         fileSystemDeviceDriver.readFile = function (fileName) {
-            _Kernel.krnTrace("READ STRING IS" + this.readChain(fileName));
-            _StdOut.putText(this.readChain(fileName));
+            if (this.checkDirectoryTrackForName(fileName) == false) {
+                _StdOut.putText("File " + fileName + " does not exist.");
+            }
+            else {
+                _Kernel.krnTrace("READ STRING IS" + this.readChain(fileName));
+                _StdOut.putText(this.readChain(fileName));
+            }
         };
         fileSystemDeviceDriver.ls = function () {
             var zeroTrack = "0";
