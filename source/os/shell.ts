@@ -530,43 +530,50 @@ module TSOS {
 
         }
         // checks the user program input for hex characters and spaces only
-        public shellLoad(args){
+        public shellLoad(args) {
+
+            if (args[0] < 0) {
+                _StdOut.putText("Priority cannot be negative");
+            }
+            else {
 
             _Kernel.krnTrace("Priority is " + args[0]);
             var userInput = <HTMLInputElement> document.getElementById("taProgramInput");
             var toArray = userInput.value;
             var counter = 0;
             _Kernel.krnTrace("the input value is " + userInput.value + ".");
-            for(var i = 0; i < toArray.length; i++){
+            for (var i = 0; i < toArray.length; i++) {
 
-                if(userInput.value.length == 0){
+                if (userInput.value.length == 0) {
                     _StdOut.putText("Please enter hex digits, buddy");
 
                 }
 
-                if(toArray.charAt(i).match(/[0-9A-Fa-f\s]/g) != null)
-                {
+                if (toArray.charAt(i).match(/[0-9A-Fa-f\s]/g) != null) {
 
                     counter++;
                 }
 
             }
-                if(counter == toArray.length){
+            if (counter == toArray.length) {
 
-                    var instructions = toArray.replace(/[\s]/g, "");
-                        memManager.loadInputToMemory(instructions, args[0]);
+                var instructions = toArray.replace(/[\s]/g, "");
 
-
-
-
-
-
+                if (args[0] != undefined) {
+                    memManager.loadInputToMemory(instructions, args[0]);
+                }
+                else {
+                    memManager.loadInputToMemory(instructions, 100);
 
                 }
-                else{
-                    _StdOut.putText("You have entered an incorrect digit.");
 
-                }
+
+            }
+            else {
+                _StdOut.putText("You have entered an incorrect digit.");
+
+            }
+        }
 
             // take the input and get rid of spacing
 
@@ -595,10 +602,18 @@ module TSOS {
                 //if the pid is equal to what was input, set currently executing to that PCB
                 if(check == args){
                    // _StdOut.putText("Executing PID " + args);
-                    currentlyExecuting = residentList[i];
-                    _CPU.updateCPU(currentlyExecuting);
-                    _CPU.isExecuting = true;
-                    execute = true;
+                    if(residentList[args].location == "disk"){
+                        var fileName = "process" + args.toString();
+                        cpuScheduler.rollInToMemory(fileName, args);
+                        execute = true;
+
+                    }
+                    else {
+                        currentlyExecuting = residentList[i];
+                        _CPU.updateCPU(currentlyExecuting);
+                        _CPU.isExecuting = true;
+                        execute = true;
+                    }
 
                 }
                 else{
@@ -622,7 +637,7 @@ module TSOS {
             //if priority is the scheduling algorithm, sort the resident list.
             if(premPriority) {
 
-                residentList = cpuScheduler.mergeSort(residentList);
+                residentList = cpuScheduler.orderResidentList(residentList);
                 for(var i = 0; i < residentList.length; i++){
                     _Kernel.krnTrace("PRIORITY RESIDENT LIST FIRST ELEMENT IS " + residentList[i].priority);
 

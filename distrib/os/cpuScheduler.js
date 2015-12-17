@@ -17,11 +17,41 @@ var TSOS;
             currentlyExecuting.state = 1;
             _CPU.isExecuting = true;
         };
+        cpuScheduler.rollInToMemory = function (fileName, pid) {
+            // first, you need to clear the segment in memory for the currently executing PCB
+            //then, you want to take the hex string in the disk and read it, then, in the currently executing
+            if (currentlyExecuting == undefined) {
+                residentList[pid].base = 0;
+                residentList[pid].limit = 255;
+                residentList[pid].PC = 0;
+                residentList[pid].location = "memory";
+            }
+            else {
+                residentList[pid].base = currentlyExecuting.base;
+                residentList[pid].limit = currentlyExecuting.limit;
+                residentList[pid].PC = currentlyExecuting.base;
+                residentList[pid].location = "memory";
+            }
+            var opCodes = TSOS.fileSystemDeviceDriver.readChain(fileName);
+            var opCodeStart = 0;
+            var opCodeEnd = 1;
+            var counter = residentList[pid].base;
+            for (var i = counter; i < residentList[pid].limit; i++) {
+                mem.opcodeMemory[i] = opCodes.charAt(opCodeStart) + opCodes.charAt(opCodeEnd);
+                opCodeStart += 2;
+                opCodeEnd += 2;
+            }
+            currentlyExecuting = residentList[pid];
+            _CPU.isExecuting = true;
+        };
         //sorting for the PCBS with priority.
         cpuScheduler.merge = function (left, right) {
             var result = [];
             while (left.length > 0 && right.length > 0) {
                 if (left[0].priority < right[0].priority) {
+                    result.push(left.shift());
+                }
+                else if (left[0].priority == right[0].priority) {
                     result.push(left.shift());
                 }
                 else {
@@ -40,7 +70,7 @@ var TSOS;
          * @param {Array} items The array to sort.
          * @return {Array} The sorted array.
          */
-        cpuScheduler.mergeSort = function (items) {
+        cpuScheduler.orderResidentList = function (items) {
             // Terminal condition - don't need to do anything for arrays with 0 or 1 items
             if (items.length < 2) {
                 return items;

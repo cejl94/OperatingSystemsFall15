@@ -7,7 +7,7 @@ var TSOS;
         //if state is 0, the process is waiting(back in the ready queue)
         //if state is 1 that means the program is executing
         //if state is 2 that means the program is finished
-        function pcb(state, pid, PC, Acc, Xreg, Yreg, Zflag, base, limit, limitCounter, priority, isExecuting) {
+        function pcb(state, pid, PC, Acc, Xreg, Yreg, Zflag, base, limit, limitCounter, priority, location, isExecuting) {
             if (state === void 0) { state = 0; }
             if (pid === void 0) { pid = 0; }
             if (PC === void 0) { PC = 0; }
@@ -19,6 +19,7 @@ var TSOS;
             if (limit === void 0) { limit = 0; }
             if (limitCounter === void 0) { limitCounter = 0; }
             if (priority === void 0) { priority = 0; }
+            if (location === void 0) { location = ""; }
             if (isExecuting === void 0) { isExecuting = false; }
             this.state = state;
             this.pid = pid;
@@ -31,9 +32,10 @@ var TSOS;
             this.limit = limit;
             this.limitCounter = limitCounter;
             this.priority = priority;
+            this.location = location;
             this.isExecuting = isExecuting;
         }
-        pcb.prototype.init = function (pid, base, limit, PC, priority) {
+        pcb.prototype.init = function (pid, base, limit, PC, priority, location) {
             this.state = 0;
             this.pid = pid;
             this.PC = PC;
@@ -45,6 +47,7 @@ var TSOS;
             this.limit = limit;
             this.limitCounter = 0;
             this.priority = priority;
+            this.location = location;
             this.isExecuting = false;
         };
         return pcb;

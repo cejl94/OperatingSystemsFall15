@@ -20,7 +20,15 @@ var TSOS;
                 // first check if you're trying to add into memory that doesnt exist
                 if (this.limitReg > 767) {
                     // load a program to the disk in this space.
-                    _StdOut.putText("Error: Not enough memory for program. Don't load anything else, idiot.");
+                    prosBlock = new TSOS.pcb();
+                    prosBlock.init(pid, 0, 0, 0, priority, "disk");
+                    residentList.push(prosBlock);
+                    TSOS.fileSystemDeviceDriver.createFile("process" + prosBlock.pid.toString());
+                    _StdOut.advanceLine();
+                    TSOS.fileSystemDeviceDriver.writeFile("process" + prosBlock.pid.toString(), instructions);
+                    TSOS.Control.updateFileSystemTable();
+                    pid++;
+                    _StdOut.putText("Program loaded to disk");
                 }
                 else {
                     // Loop through each two character "byte" of user input
@@ -33,7 +41,7 @@ var TSOS;
                     }
                     prosBlock = new TSOS.pcb();
                     //given that load increases the base and the limit after the load is complete, we must get the previous base and limit
-                    prosBlock.init(pid, this.baseReg, this.limitReg, this.counter, priority);
+                    prosBlock.init(pid, this.baseReg, this.limitReg, this.counter, priority, "memory");
                     _StdOut.putText("Program successfully loaded, pid = " + prosBlock.pid);
                     _Kernel.krnTrace("Program successfully loaded, PRIORITY = " + prosBlock.priority.toString());
                     _StdOut.advanceLine();

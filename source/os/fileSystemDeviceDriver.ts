@@ -115,13 +115,18 @@ module TSOS{
             var newValue="";
             for(var i = 0; i < value.length; i+=2) {
                 var hexCode = (value.charAt(i) + value.charAt(i + 1)).toString();
-               // _Kernel.krnTrace("HEX CODE = " + hexCode);
+                _Kernel.krnTrace("HEX CODE = " + hexCode);
                 var ascii = parseInt(hexCode, 16);
 
-              //  _Kernel.krnTrace("DECIMAL CODE = " + ascii);
+               // _Kernel.krnTrace("CODE FOR ZEROZERO BECOMES= " + parseInt()
+                _Kernel.krnTrace("ASCII = " +ascii)
+
 
                 var string = String.fromCharCode(ascii);
 
+               // if(string.length == 1){
+               //     string = "0" + string;
+               // }
 
                 newValue+= string;
             }
@@ -318,11 +323,16 @@ module TSOS{
             var defaultStorageValue ="000000000000000000000000000000000000000000000000000000000000";
             var firstDataBlock = this.checkDirectoryForNameDataTSB(fileName);
             var blocksNeeded = this.determineNumberOfBlocks(fileData);
+            _Kernel.krnTrace("Number of blocks neeede is " + blocksNeeded);
 
             for(var i = 1; i < blocksNeeded; i++){
-                sessionStorage.setItem(firstDataBlock, "1" + this.checkDataTracks() + defaultStorageValue + defaultStorageValue);
+                _Kernel.krnTrace("ITERATED LOOPS " + firstDataBlock);
+                var tracks = this.checkDataTracks();
+                _Kernel.krnTrace("TRACKS OPEN IS " + tracks);
+                sessionStorage.setItem(firstDataBlock, "1" + tracks + defaultStorageValue + defaultStorageValue);
                 _Kernel.krnTrace("Current TSB = " + firstDataBlock + " AND ITS LINK IS " + sessionStorage.getItem(firstDataBlock).slice(1,4));
                 firstDataBlock = sessionStorage.getItem(firstDataBlock).slice(1,4);
+                _Kernel.krnTrace("DEBUG STATEMENT = " + firstDataBlock);
 
             }
 
@@ -352,46 +362,69 @@ module TSOS{
             sessionStorage.setItem(firstDataBlock, defaultStorageValue + defaultStorageValue);
         }
 
-        public static writeChain(fileData:string, fileName:string):void{
-            var defaultStorageValue ="000000000000000000000000000000000000000000000000000000000000";
+        public static writeChain(fileData:string, fileName:string):void {
+            var defaultStorageValue = "000000000000000000000000000000000000000000000000000000000000";
             var firstDataBlock = this.checkDirectoryForNameDataTSB(fileName);
             var blocksNeeded = this.determineNumberOfBlocks(fileData);
             var startSubString = 0;
-            var endSubString = 59;
-            while(this.getNextTSB(firstDataBlock) !="000"){
+            var endSubString = 60;
+
+           /* if (memManager.limitReg > 767) {
+                while (this.getNextTSB(firstDataBlock) != "000") {
+                    sessionStorage.setItem(firstDataBlock, "1" + this.getNextTSB(firstDataBlock) + fileData.substr(startSubString, endSubString));
+                    firstDataBlock = this.getNextTSB(firstDataBlock);
+                    startSubString += 60;
+                    endSubString += 60;
+
+                }
+                sessionStorage.setItem(firstDataBlock, "1"+ "000" + fileData.substr(startSubString));
+
+            }*/
+           // else {
+
+
+            while (this.getNextTSB(firstDataBlock) != "000") {
                 sessionStorage.setItem(firstDataBlock, "1" + this.getNextTSB(firstDataBlock) + this.convertStringToHex(fileData.substr(startSubString, endSubString)));
                 firstDataBlock = this.getNextTSB(firstDataBlock);
-                startSubString+=60;
-                endSubString+=60;
+                startSubString += 60;
+                endSubString += 60;
 
             }
 
-            sessionStorage.setItem(firstDataBlock, "1"+ "000" + this.finishData(this.convertStringToHex(fileData.substr(startSubString))));
+                sessionStorage.setItem(firstDataBlock, "1"+ "000" + this.finishData(this.convertStringToHex(fileData.substr(startSubString))));
+
+            //}
 
 
         }
 
         public static readChain(fileName:string):string{
 
-            var defaultStorageValue ="000000000000000000000000000000000000000000000000000000000000";
-            var firstDataBlock = this.checkDirectoryForNameDataTSB(fileName);
-            //var blocksNeeded = this.determineNumberOfBlocks(fileData);
-            var data = "";
-            while(this.getNextTSB(firstDataBlock) !="000"){
-                var concat = sessionStorage.getItem(firstDataBlock).slice(4);
-                data+= concat;
-                firstDataBlock = this.getNextTSB(firstDataBlock);
+            if (this.checkDirectoryTrackForName(fileName) == false) {
 
+                _StdOut.putText("File " + fileName + " does not exist.");
+            }
+            else {
+
+                var defaultStorageValue = "000000000000000000000000000000000000000000000000000000000000";
+                var firstDataBlock = this.checkDirectoryForNameDataTSB(fileName);
+                //var blocksNeeded = this.determineNumberOfBlocks(fileData);
+                var data = "";
+                while (this.getNextTSB(firstDataBlock) != "000") {
+                    var concat = sessionStorage.getItem(firstDataBlock).slice(4);
+                    data += concat;
+                    firstDataBlock = this.getNextTSB(firstDataBlock);
+
+
+                }
+
+                data += sessionStorage.getItem(firstDataBlock).slice(4);
+                var ascii = this.convertHexToString(data);
+
+                return ascii;
+                //sessionStorage.setItem(firstDataBlock, "1"+ "000" + this.finishData(this.convertStringToHex(fileData.substr(startSubString))));
 
             }
-
-            data+= sessionStorage.getItem(firstDataBlock).slice(4);
-            var ascii = this.convertHexToString(data);
-
-            return ascii;
-            //sessionStorage.setItem(firstDataBlock, "1"+ "000" + this.finishData(this.convertStringToHex(fileData.substr(startSubString))));
-
-
 
         }
 
@@ -438,24 +471,44 @@ module TSOS{
 
 
             else {
-                //we want the TSB of the first data track block associated with the file
-                // then we want to take the string we entered, convert it to hex,
-                // and set the item value to that new string entered.
-                //if the string is greater than 120 characters(hex is 2 characters per byte, 60 bytes),
-                //then find the next open block, and set the value to the sliced string of the original.
+
+                //first check if the string you've passed in is the hex op codes
+
+                /*if(memManager.limitReg > 767){
+
+                    if (fileData.length <= 60) {
+
+                        sessionStorage.setItem(this.checkDirectoryForNameDataTSB(fileName), "1" + "000" + fileData);
+
+                    }
+                    else {
+                        this.setChain(fileData, fileName);
+                        this.writeChain(fileData, fileName);
+
+                    }
+
+                }*/
+                //else {
+
+                    //we want the TSB of the first data track block associated with the file
+                    // then we want to take the string we entered, convert it to hex,
+                    // and set the item value to that new string entered.
+                    //if the string is greater than 120 characters(hex is 2 characters per byte, 60 bytes),
+                    //then find the next open block, and set the value to the sliced string of the original.
 
 
-                // if the fileData is not longer than 60 bytes, then dont worry about chaining to a new data track
-                if (this.convertStringToHex(fileData).length <= 60) {
+                    // if the fileData is not longer than 60 bytes, then dont worry about chaining to a new data track
+                    if (this.convertStringToHex(fileData).length <= 60) {
 
-                    sessionStorage.setItem(this.checkDirectoryForNameDataTSB(fileName), "1" + "000" + this.finishData(this.convertStringToHex(fileData)));
+                        sessionStorage.setItem(this.checkDirectoryForNameDataTSB(fileName), "1" + "000" + this.finishData(this.convertStringToHex(fileData)));
 
-                }
-                else {
-                    this.setChain(fileData, fileName);
-                    this.writeChain(fileData, fileName);
+                    }
+                    else {
+                        this.setChain(fileData, fileName);
+                        this.writeChain(fileData, fileName);
 
-                }
+                    }
+               // }
             }
 
         }

@@ -31,7 +31,18 @@ export class memoryManager {
                if (this.limitReg > 767) {
 
                    // load a program to the disk in this space.
-                   _StdOut.putText("Error: Not enough memory for program. Don't load anything else, idiot.");
+
+                   prosBlock = new pcb();
+                   prosBlock.init(pid, 0,0,0, priority, "disk");
+                   residentList.push(prosBlock);
+                   fileSystemDeviceDriver.createFile("process" + prosBlock.pid.toString());
+                   _StdOut.advanceLine();
+                   fileSystemDeviceDriver.writeFile("process" + prosBlock.pid.toString(), instructions);
+
+
+                   Control.updateFileSystemTable();
+                   pid++;
+                   _StdOut.putText("Program loaded to disk");
 
                }
                //If the memory exists, start loading in starting at the index of the base register
@@ -57,7 +68,7 @@ export class memoryManager {
 
                    prosBlock = new pcb();
                    //given that load increases the base and the limit after the load is complete, we must get the previous base and limit
-                   prosBlock.init(pid, this.baseReg, this.limitReg, this.counter, priority);
+                   prosBlock.init(pid, this.baseReg, this.limitReg, this.counter, priority, "memory");
                    _StdOut.putText("Program successfully loaded, pid = " + prosBlock.pid);
                    _Kernel.krnTrace("Program successfully loaded, PRIORITY = " + prosBlock.priority.toString());
 
@@ -91,9 +102,6 @@ export class memoryManager {
 
 
         }
-
-
-
 
 
         public readCodeInMemory(address: number):string{
