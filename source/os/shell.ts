@@ -606,6 +606,8 @@ module TSOS {
                         var fileName = "process" + args.toString();
                         cpuScheduler.rollInToMemory(fileName, args);
                         execute = true;
+                        memManager.clearSegment(residentList[pid].base, residentList[pid].limit);
+
 
                     }
                     else {

@@ -20,6 +20,7 @@ var TSOS;
         cpuScheduler.rollInToMemory = function (fileName, pid) {
             // first, you need to clear the segment in memory for the currently executing PCB
             //then, you want to take the hex string in the disk and read it, then, in the currently executing
+            _Kernel.krnTrace("CURRENTLY EXECUTING IS" + currentlyExecuting);
             if (currentlyExecuting == undefined) {
                 residentList[pid].base = 0;
                 residentList[pid].limit = 255;
@@ -36,6 +37,7 @@ var TSOS;
             var opCodeStart = 0;
             var opCodeEnd = 1;
             var counter = residentList[pid].base;
+            memManager.clearSegment(counter, residentList[pid].limit);
             for (var i = counter; i < residentList[pid].limit; i++) {
                 mem.opcodeMemory[i] = opCodes.charAt(opCodeStart) + opCodes.charAt(opCodeEnd);
                 opCodeStart += 2;

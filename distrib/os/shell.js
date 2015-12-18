@@ -470,6 +470,7 @@ var TSOS;
                         var fileName = "process" + args.toString();
                         TSOS.cpuScheduler.rollInToMemory(fileName, args);
                         execute = true;
+                        memManager.clearSegment(residentList[pid].base, residentList[pid].limit);
                     }
                     else {
                         currentlyExecuting = residentList[i];
