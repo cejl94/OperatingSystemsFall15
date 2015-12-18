@@ -785,6 +785,7 @@ module TSOS {
 
                // _Kernel.krnTrace("This is being run");
                 fileSystemDeviceDriver.createFile(args.join());
+                _StdOut.putText("File " + args.join()+ " was created successfully");
 
                 Control.updateFileSystemTable();
 
@@ -907,7 +908,7 @@ module TSOS {
                     fcfs=true;
                     roundRobin= false;
                     premPriority=false;
-                    _Kernel.krnTrace("Scheduling algorithm set to first come first serve.");
+                    _StdOut.putText("Scheduling algorithm set to first come first serve.");
 
                 }
                 if(args == "priority"){

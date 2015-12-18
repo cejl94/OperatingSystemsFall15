@@ -35,47 +35,61 @@ module TSOS{
 
     }
 
-        public static swap(fileName:string, pid:number):void{
+        public static swap(fileNameRollIn:string,  pids: number):void{
 
             // first, you need to clear the segment in memory for the currently executing PCB
             //then, you want to take the hex string in the disk and read it, then, in the currently executing
 
-            _Kernel.krnTrace("CURRENTLY EXECUTING IS" + currentlyExecuting);
-            if(currentlyExecuting == undefined){
+            var nextProcess = readyQueue.index(currentlyExecuting.pid+1);
 
-                residentList[pid].base = 0;
-                residentList[pid].limit = 255;
-                residentList[pid].PC = 0;
-                residentList[pid].location = "memory";
+
+
+            if(nextProcess != undefined) {
+
+
+                nextProcess.location == "memory";
+                nextProcess.base = currentlyExecuting.base;
+                nextProcess.limit = currentlyExecuting.limit;
+                nextProcess.PC = currentlyExecuting.base;
+                _Kernel.krnTrace("BASE = " + nextProcess.base + " LIMIT = " + nextProcess.limit + " PC =" + nextProcess.PC);
+
+               // _Kernel.krnTrace()
+                //fileSystemDeviceDriver.createFile("process"+currentlyExecuting.pid.toString());
+                // fileSystemDeviceDriver.writeFile("process"+currentlyExecuting.pid.toString(), memManager.getOpCodeStringFromMemory(currentlyExecuting.base, currentlyExecuting.limit));
+
+
+                var opCodes = fileSystemDeviceDriver.readChain("process" + nextProcess.pid.toString());
+                var opCodeStart = 0;
+                var opCodeEnd = 1;
+                var counter = nextProcess.base;
+                memManager.clearSegment(counter, nextProcess.limit);
+                for (var i = counter; i < nextProcess.limit; i++) {
+
+                    var codes = opCodes.charAt(opCodeStart) + opCodes.charAt(opCodeEnd);
+                    if (codes == "") {
+                        mem.opcodeMemory[i] = "00";
+                        opCodeStart += 2;
+                        opCodeEnd += 2;
+                    }
+                    else {
+
+
+                        mem.opcodeMemory[i] = codes;
+                        opCodeStart += 2;
+                        opCodeEnd += 2;
+                    }
+
+                }
+                currentlyExecuting = readyQueue.dequeue();
+                fileSystemDeviceDriver.deleteFile("process" + nextProcess.pid.toString());
+                Control.updateFileSystemTable();
+                _CPU.updateCPU(currentlyExecuting);
+                _CPU.isExecuting = true;
+
+
 
 
             }
-            else {
-                residentList[pid].base = currentlyExecuting.base;
-                residentList[pid].limit = currentlyExecuting.limit;
-                residentList[pid].PC = currentlyExecuting.base;
-                residentList[pid].location = "memory";
-            }
-
-            var opCodes = fileSystemDeviceDriver.readChain(fileName);
-            var opCodeStart = 0;
-            var opCodeEnd = 1;
-            var counter = residentList[pid].base;
-            memManager.clearSegment(counter, residentList[pid].limit);
-            for(var i = counter; i < residentList[pid].limit; i++ ){
-
-                mem.opcodeMemory[i] = opCodes.charAt(opCodeStart) + opCodes.charAt(opCodeEnd);
-                opCodeStart+=2;
-                opCodeEnd+=2;
-
-            }
-            currentlyExecuting = residentList[pid];
-            _CPU.isExecuting = true;
-
-
-
-
-
         }
 
         public static runSingleFromDisk(fileName:string, pid:number){
@@ -236,16 +250,33 @@ module TSOS{
 
         static contextSwitchBreak():void{
             quantumCounter = 0;
+            var nextProcess = readyQueue.index(currentlyExecuting.pid +1);
+           // _Kernel.krnTrace("next pid " + nextProcess.pid);
             _Kernel.krnTrace("BREAK SWTICH ---- READY Q SIZE IS" + readyQueue.getSize());
            //  set the quantu back to 0, and then check if the ready queue has items in it. If there is, set executing
             // back to true, and then switch the PCBS, make sure to set the state to 2 for terminated before switching PCBs
                 if (readyQueue.getSize() > 0) {
-                    _CPU.isExecuting = true;
-                    _Kernel.krnTrace("LENGTH IS" + readyQueue.getSize());
-                    _CPU.updatePCB(_CPU);
-                    currentlyExecuting.state = 2;
-                    currentlyExecuting = readyQueue.dequeue();
-                    _CPU.updateCPU(currentlyExecuting);
+
+
+                   // _Kernel.krnTrace("current location = " + currentlyExecuting.location.toString() + " next = " + nextProcess.location.toString());
+
+
+                        if (nextProcess != undefined || nextProcess.location == "disk") {
+
+                            _Kernel.krnTrace("THIS IS RUNNING");
+                            this.swap("", 0);
+
+                        }
+
+                    else {
+
+                            _CPU.isExecuting = true;
+                            _Kernel.krnTrace("LENGTH IS" + readyQueue.getSize());
+                            _CPU.updatePCB(_CPU);
+                            currentlyExecuting.state = 2;
+                            currentlyExecuting = readyQueue.dequeue();
+                            _CPU.updateCPU(currentlyExecuting);
+                        }
 
                     // this means that there is no more processes and currently executing is the last process, just set executing to false
                     } else {

@@ -588,6 +588,7 @@ var TSOS;
             if (args.length > 0 && args.length <= 60) {
                 // _Kernel.krnTrace("This is being run");
                 TSOS.fileSystemDeviceDriver.createFile(args.join());
+                _StdOut.putText("File " + args.join() + " was created successfully");
                 TSOS.Control.updateFileSystemTable();
             }
             else {
@@ -661,7 +662,7 @@ var TSOS;
                     fcfs = true;
                     roundRobin = false;
                     premPriority = false;
-                    _Kernel.krnTrace("Scheduling algorithm set to first come first serve.");
+                    _StdOut.putText("Scheduling algorithm set to first come first serve.");
                 }
                 if (args == "priority") {
                     premPriority = true;

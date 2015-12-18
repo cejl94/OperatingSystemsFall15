@@ -276,7 +276,6 @@ var TSOS;
                 sessionStorage.setItem(this.checkDirectoryTrack(), "1" + this.checkDataTracks() + this.finishData(this.convertStringToHex(fileName)));
                 //also, set the META bit of that data block to 1.
                 sessionStorage.setItem(this.checkDataTracks(), "1" + defaultInUseTrackValue + defaultInUseTrackValue + "0");
-                _StdOut.putText("File " + fileName + " was created successfully");
             }
         };
         //writes the data specified in quotes to the file name that was entered
