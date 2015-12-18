@@ -369,25 +369,26 @@ module TSOS{
             var blocksNeeded = this.determineNumberOfBlocks(fileData);
             var startSubString = 0;
             var endSubString = 60;
-            var substring = this.convertStringToHex(fileData.substr(startSubString, endSubString));
 
 
             while (this.getNextTSB(firstDataBlock) != "000") {
 
+                var substring = this.convertStringToHex(fileData.slice(startSubString, endSubString));
 
                 _Kernel.krnTrace("START SUBSTRING = " + startSubString + " END SUBSTRING = " + endSubString);
-                _Kernel.krnTrace("SUBSTRING = " + (this.convertStringToHex(fileData.substr(startSubString, endSubString))) + "ITS LENGTH IS " + substring.length);
+                _Kernel.krnTrace("SUBSTRING = " + substring + "ITS LENGTH IS " + substring.length);
                // var substring = hex.substr(startSubString, endSubString);
                // _Kernel.krnTrace("SUBSTRIGN IS " + substring);
                 sessionStorage.setItem(firstDataBlock, "1" + this.getNextTSB(firstDataBlock) + substring);
                 firstDataBlock = this.getNextTSB(firstDataBlock);
                 startSubString += 60;
                 endSubString += 60;
-                _Kernel.krnTrace("SUBSTRING AFTER SETTING THE COUNTERS =" + substring)
+
+               // _Kernel.krnTrace("SUBSTRING AFTER SETTING THE COUNTERS =" + substring)
 
             }
 
-                sessionStorage.setItem(firstDataBlock, "1"+ "000" + this.finishData(this.convertStringToHex(fileData.substr(startSubString))));
+                sessionStorage.setItem(firstDataBlock, "1"+ "000" + this.finishData(this.convertStringToHex(fileData.slice(startSubString))));
 
             //}
 
