@@ -817,7 +817,7 @@ module TSOS {
 
                 _Kernel.krnTrace("Write file is being run");
 
-                _Kernel.krnTrace("ARGS ARE " + args[0] + " " + args[1]);
+               // _Kernel.krnTrace("ARGS ARE " + args[0] + " " + args[1]);
 
                 //for the second arguement, add all its characters into a string
 
@@ -827,7 +827,7 @@ module TSOS {
 
 
                 }
-                _Kernel.krnTrace(" input is" + fileData);
+                //_Kernel.krnTrace(" input is" + fileData);
 
                 //subtract 2 from length because of the extra space added above
                 if(fileData.charAt(0) == "\"" && fileData.charAt(fileData.length - 2) == "\"" ){

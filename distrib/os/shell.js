@@ -608,13 +608,13 @@ var TSOS;
             //the methods in fileSystemDeviceDriver
             if (args.length >= 2) {
                 _Kernel.krnTrace("Write file is being run");
-                _Kernel.krnTrace("ARGS ARE " + args[0] + " " + args[1]);
+                // _Kernel.krnTrace("ARGS ARE " + args[0] + " " + args[1]);
                 //for the second arguement, add all its characters into a string
                 var fileData = "";
                 for (var i = 1; i < args.length; i++) {
                     fileData += args[i] + " ";
                 }
-                _Kernel.krnTrace(" input is" + fileData);
+                //_Kernel.krnTrace(" input is" + fileData);
                 //subtract 2 from length because of the extra space added above
                 if (fileData.charAt(0) == "\"" && fileData.charAt(fileData.length - 2) == "\"") {
                     TSOS.fileSystemDeviceDriver.writeFile(args[0], fileData.slice(1, fileData.length - 2));

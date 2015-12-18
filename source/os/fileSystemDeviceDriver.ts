@@ -9,7 +9,7 @@ module TSOS{
 
         //public storageKey: string = "";
         //60 0s to begin
-        public defaultStorageValue = "0000000000000000000000000000000000000000000000000000000000000000";
+        public defaultStorageValue = "000000000000000000000000000000000000000000000000000000000000";
         public mbrStorageValue ="MBR000000000000000000000000000000000000000000000000000000000";
 
 
@@ -31,7 +31,7 @@ module TSOS{
                             sessionStorage.setItem(storageKey, "1" + "000" + this.mbrStorageValue +this.defaultStorageValue);
                         }
                         else{
-                            sessionStorage.setItem(storageKey, this.defaultStorageValue + this.defaultStorageValue);
+                            sessionStorage.setItem(storageKey, "0" + "000" + this.defaultStorageValue + this.defaultStorageValue);
                         }
                     }
                 }
@@ -45,7 +45,7 @@ module TSOS{
         //format really just resets the sessions storage
         public static format():void{
 
-            var defaultStorageValue = "0000000000000000000000000000000000000000000000000000000000000000";
+            var defaultStorageValue = "000000000000000000000000000000000000000000000000000000000000";
             var mbrStorageValue ="MBR000000000000000000000000000000000000000000000000000000000";
             sessionStorage.clear();
             for(var t = 0; t < 4; t++){
@@ -58,7 +58,7 @@ module TSOS{
                             sessionStorage.setItem(storageKey, "1" + "000" + mbrStorageValue+defaultStorageValue);
                         }
                         else{
-                            sessionStorage.setItem(storageKey, defaultStorageValue +defaultStorageValue );
+                            sessionStorage.setItem(storageKey, "0" + "000" + defaultStorageValue +defaultStorageValue );
                         }
                     }
                 }
@@ -74,7 +74,7 @@ module TSOS{
             _Kernel.krnTrace(" length of before string is " + value.length);
             var finalData = value;
 
-            for(var i = 0; i < 64 - value.length; i++){
+            for(var i = 0; i < 60 - (value.length/2); i++){
 
 
                 finalData+="00";
@@ -107,7 +107,7 @@ module TSOS{
             }
 
 
-            _Kernel.krnTrace("heres the string" + newValue);
+           // _Kernel.krnTrace("heres the string" + newValue);
             return newValue;
         }
 
@@ -115,7 +115,7 @@ module TSOS{
             var newValue="";
             for(var i = 0; i < value.length; i+=2) {
                 var hexCode = (value.charAt(i) + value.charAt(i + 1)).toString();
-                _Kernel.krnTrace("HEX CODE = " + hexCode);
+              //  _Kernel.krnTrace("HEX CODE = " + hexCode);
                 var ascii = parseInt(hexCode, 16);
 
                // _Kernel.krnTrace("CODE FOR ZEROZERO BECOMES= " + parseInt()
@@ -146,7 +146,7 @@ module TSOS{
 
                     if (sessionStorage.getItem(directoryKey).charAt(0) == "0") {
 
-                        _Kernel.krnTrace("WE FOUND AN EMPTY BLOCK" + directoryKey);
+                        //_Kernel.krnTrace("WE FOUND AN EMPTY BLOCK" + directoryKey);
 
                         return directoryKey;
 
@@ -184,7 +184,7 @@ module TSOS{
         public static checkDirectoryTrackForName(fileName:string):boolean{
 
             var fileN = this.convertStringToHex(fileName);
-            _Kernel.krnTrace("FILE NAME IN HEX LENGTH IS " + fileN.length);
+           // _Kernel.krnTrace("FILE NAME IN HEX LENGTH IS " + fileN.length);
             var zeroTrack = "0";
             for (var s = 0; s < 8; s++) {
                 for (var b = 0; b < 8; b++) {
@@ -193,7 +193,7 @@ module TSOS{
 
                    // _Kernel.krnTrace("DIR TSB IS " + directoryKey);
 
-                    _Kernel.krnTrace("THIS IS WHAT IM TRYING TO MATCH " + sessionStorage.getItem(directoryKey).slice(4, fileN.length + 4));
+                  //  _Kernel.krnTrace("THIS IS WHAT IM TRYING TO MATCH " + sessionStorage.getItem(directoryKey).slice(4, fileN.length + 4));
 
                     if (sessionStorage.getItem(directoryKey).slice(4, fileN.length+4) == fileN)
                     {
@@ -326,13 +326,14 @@ module TSOS{
             _Kernel.krnTrace("Number of blocks neeede is " + blocksNeeded);
 
             for(var i = 1; i < blocksNeeded; i++){
-                _Kernel.krnTrace("ITERATED LOOPS " + firstDataBlock);
+                //_Kernel.krnTrace("ITERATED LOOPS " + firstDataBlock);
                 var tracks = this.checkDataTracks();
-                _Kernel.krnTrace("TRACKS OPEN IS " + tracks);
+               // _Kernel.krnTrace("TRACKS OPEN IS " + tracks);
                 sessionStorage.setItem(firstDataBlock, "1" + tracks + defaultStorageValue + defaultStorageValue);
-                _Kernel.krnTrace("Current TSB = " + firstDataBlock + " AND ITS LINK IS " + sessionStorage.getItem(firstDataBlock).slice(1,4));
-                firstDataBlock = sessionStorage.getItem(firstDataBlock).slice(1,4);
-                _Kernel.krnTrace("DEBUG STATEMENT = " + firstDataBlock);
+                sessionStorage.setItem(tracks, "1" + "000" + defaultStorageValue + defaultStorageValue);
+                //_Kernel.krnTrace("Current TSB = " + firstDataBlock + " AND ITS LINK IS " + sessionStorage.getItem(firstDataBlock).slice(1,4));
+                firstDataBlock = this.getNextTSB(firstDataBlock);
+                //_Kernel.krnTrace("DEBUG STATEMENT = " + firstDataBlock);
 
             }
 
@@ -368,26 +369,21 @@ module TSOS{
             var blocksNeeded = this.determineNumberOfBlocks(fileData);
             var startSubString = 0;
             var endSubString = 60;
-
-           /* if (memManager.limitReg > 767) {
-                while (this.getNextTSB(firstDataBlock) != "000") {
-                    sessionStorage.setItem(firstDataBlock, "1" + this.getNextTSB(firstDataBlock) + fileData.substr(startSubString, endSubString));
-                    firstDataBlock = this.getNextTSB(firstDataBlock);
-                    startSubString += 60;
-                    endSubString += 60;
-
-                }
-                sessionStorage.setItem(firstDataBlock, "1"+ "000" + fileData.substr(startSubString));
-
-            }*/
-           // else {
+            var substring = this.convertStringToHex(fileData.substr(startSubString, endSubString));
 
 
             while (this.getNextTSB(firstDataBlock) != "000") {
-                sessionStorage.setItem(firstDataBlock, "1" + this.getNextTSB(firstDataBlock) + this.convertStringToHex(fileData.substr(startSubString, endSubString)));
+
+
+                _Kernel.krnTrace("START SUBSTRING = " + startSubString + " END SUBSTRING = " + endSubString);
+                _Kernel.krnTrace("SUBSTRING = " + (this.convertStringToHex(fileData.substr(startSubString, endSubString))) + "ITS LENGTH IS " + substring.length);
+               // var substring = hex.substr(startSubString, endSubString);
+               // _Kernel.krnTrace("SUBSTRIGN IS " + substring);
+                sessionStorage.setItem(firstDataBlock, "1" + this.getNextTSB(firstDataBlock) + substring);
                 firstDataBlock = this.getNextTSB(firstDataBlock);
                 startSubString += 60;
                 endSubString += 60;
+                _Kernel.krnTrace("SUBSTRING AFTER SETTING THE COUNTERS =" + substring)
 
             }
 
@@ -421,6 +417,7 @@ module TSOS{
                 data += sessionStorage.getItem(firstDataBlock).slice(4);
                 var ascii = this.convertHexToString(data);
 
+                _Kernel.krnTrace("returned " + ascii);
                 return ascii;
                 //sessionStorage.setItem(firstDataBlock, "1"+ "000" + this.finishData(this.convertStringToHex(fileData.substr(startSubString))));
 
@@ -472,23 +469,7 @@ module TSOS{
 
             else {
 
-                //first check if the string you've passed in is the hex op codes
 
-                /*if(memManager.limitReg > 767){
-
-                    if (fileData.length <= 60) {
-
-                        sessionStorage.setItem(this.checkDirectoryForNameDataTSB(fileName), "1" + "000" + fileData);
-
-                    }
-                    else {
-                        this.setChain(fileData, fileName);
-                        this.writeChain(fileData, fileName);
-
-                    }
-
-                }*/
-                //else {
 
                     //we want the TSB of the first data track block associated with the file
                     // then we want to take the string we entered, convert it to hex,
@@ -498,7 +479,7 @@ module TSOS{
 
 
                     // if the fileData is not longer than 60 bytes, then dont worry about chaining to a new data track
-                    if (this.convertStringToHex(fileData).length <= 60) {
+                    if (this.convertStringToHex(fileData).length <= 120) {
 
                         sessionStorage.setItem(this.checkDirectoryForNameDataTSB(fileName), "1" + "000" + this.finishData(this.convertStringToHex(fileData)));
 
