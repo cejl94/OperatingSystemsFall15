@@ -231,6 +231,9 @@ module TSOS {
                         this.isExecuting = false;
                         cpuScheduler.contextSwitchBreak();
 
+                        Control.updateCPUtable();
+                        Control.updatePcbTable();
+
                         break;
                     case "EC":
                         // Compare the value of an address in memory to the X register

@@ -17,7 +17,7 @@ var TSOS;
             currentlyExecuting.state = 1;
             _CPU.isExecuting = true;
         };
-        cpuScheduler.rollInToMemory = function (fileName, pid) {
+        cpuScheduler.swap = function (fileName, pid) {
             // first, you need to clear the segment in memory for the currently executing PCB
             //then, you want to take the hex string in the disk and read it, then, in the currently executing
             _Kernel.krnTrace("CURRENTLY EXECUTING IS" + currentlyExecuting);
@@ -44,6 +44,51 @@ var TSOS;
                 opCodeEnd += 2;
             }
             currentlyExecuting = residentList[pid];
+            _CPU.isExecuting = true;
+        };
+        cpuScheduler.runSingleFromDisk = function (fileName, pid) {
+            if (currentlyExecuting == undefined) {
+                residentList[0].location = "disk";
+                TSOS.fileSystemDeviceDriver.createFile("process" + residentList[0].pid.toString());
+                TSOS.fileSystemDeviceDriver.writeFile("process" + residentList[0].pid.toString(), memManager.getOpCodeStringFromMemory(residentList[0].base, residentList[0].limit));
+                TSOS.Control.updateFileSystemTable();
+                residentList[pid].base = 0;
+                residentList[pid].limit = 255;
+                residentList[pid].PC = 0;
+                residentList[pid].location = "memory";
+            }
+            else {
+                currentlyExecuting.base = 0;
+                currentlyExecuting.limit = 255;
+                currentlyExecuting.PC = 0;
+                currentlyExecuting.location = "memory";
+                residentList[pid].base = currentlyExecuting.base;
+                residentList[pid].limit = currentlyExecuting.limit;
+                residentList[pid].PC = currentlyExecuting.PC;
+                residentList[pid].location = "memory";
+                _CPU.updateCPU(currentlyExecuting);
+            }
+            var opCodes = TSOS.fileSystemDeviceDriver.readChain(fileName);
+            var opCodeStart = 0;
+            var opCodeEnd = 1;
+            var counter = residentList[pid].base;
+            memManager.clearSegment(counter, residentList[pid].limit);
+            for (var i = counter; i < residentList[pid].limit; i++) {
+                var codes = opCodes.charAt(opCodeStart) + opCodes.charAt(opCodeEnd);
+                if (codes == "") {
+                    mem.opcodeMemory[i] = "00";
+                    opCodeStart += 2;
+                    opCodeEnd += 2;
+                }
+                else {
+                    mem.opcodeMemory[i] = codes;
+                    opCodeStart += 2;
+                    opCodeEnd += 2;
+                }
+            }
+            currentlyExecuting = residentList[pid];
+            TSOS.fileSystemDeviceDriver.deleteFile(fileName);
+            TSOS.Control.updateFileSystemTable();
             _CPU.isExecuting = true;
         };
         //sorting for the PCBS with priority.
@@ -77,7 +122,9 @@ var TSOS;
             if (items.length < 2) {
                 return items;
             }
-            var work = [], i, len;
+            var work = [];
+            var i;
+            var len;
             for (i = 0, len = items.length; i < len; i++) {
                 work.push([items[i]]);
             }
@@ -126,10 +173,12 @@ var TSOS;
             else {
                 //_CPU.updatePCB(_CPU);
                 _CPU.isExecuting = false;
+                //currentlyExecuting == undefined;
                 _StdOut.advanceLine();
                 _StdOut.putText("Execution complete");
                 _StdOut.advanceLine();
                 _StdOut.putText(">");
+                memManager.clearSegment(currentlyExecuting.base, currentlyExecuting.limit);
             }
         };
         return cpuScheduler;

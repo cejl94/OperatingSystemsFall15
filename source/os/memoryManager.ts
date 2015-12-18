@@ -140,5 +140,27 @@ export class memoryManager {
             }
             Control.updateMemoryTable();
         }
+
+        public findFreeSegment():void{
+
+            for(var i = 0; i < mem.opcodeMemory.length; i++){
+               // if(mem)
+            }
+        }
+
+        public getOpCodeStringFromMemory(base:number, limit:number):string{
+
+            var opCodeString ="";
+            for(var i = base; i < limit; i++){
+
+                _Kernel.krnTrace("CODES FOR SWAPPING ARE " + mem.opcodeMemory[i]);
+                opCodeString  += mem.opcodeMemory[i];
+
+
+            }
+            _Kernel.krnTrace("OPCODE STRIGNG PRE HEX MEM IS " + opCodeString);
+            _Kernel.krnTrace("OPCODE STRING FROM MEMORY IS " + fileSystemDeviceDriver.convertStringToHex(opCodeString));
+            return opCodeString;
+        }
     }
 }

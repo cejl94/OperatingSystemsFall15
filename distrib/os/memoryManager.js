@@ -88,6 +88,20 @@ var TSOS;
             }
             TSOS.Control.updateMemoryTable();
         };
+        memoryManager.prototype.findFreeSegment = function () {
+            for (var i = 0; i < mem.opcodeMemory.length; i++) {
+            }
+        };
+        memoryManager.prototype.getOpCodeStringFromMemory = function (base, limit) {
+            var opCodeString = "";
+            for (var i = base; i < limit; i++) {
+                _Kernel.krnTrace("CODES FOR SWAPPING ARE " + mem.opcodeMemory[i]);
+                opCodeString += mem.opcodeMemory[i];
+            }
+            _Kernel.krnTrace("OPCODE STRIGNG PRE HEX MEM IS " + opCodeString);
+            _Kernel.krnTrace("OPCODE STRING FROM MEMORY IS " + TSOS.fileSystemDeviceDriver.convertStringToHex(opCodeString));
+            return opCodeString;
+        };
         return memoryManager;
     })();
     TSOS.memoryManager = memoryManager;

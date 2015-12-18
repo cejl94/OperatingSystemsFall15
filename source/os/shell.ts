@@ -604,7 +604,7 @@ module TSOS {
                    // _StdOut.putText("Executing PID " + args);
                     if(residentList[args].location == "disk"){
                         var fileName = "process" + args.toString();
-                        cpuScheduler.rollInToMemory(fileName, args);
+                        cpuScheduler.runSingleFromDisk(fileName, args);
                         execute = true;
                         memManager.clearSegment(residentList[pid].base, residentList[pid].limit);
 

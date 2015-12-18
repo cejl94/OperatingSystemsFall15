@@ -82,6 +82,7 @@ var TSOS;
             }
             else if (_CPU.isExecuting) {
                 _CPU.cycle();
+                TSOS.Control.updateMemoryTable();
                 //_CPU.printCPU();
                 currentlyExecuting.limitCounter += 1;
                 if (roundRobin) {
