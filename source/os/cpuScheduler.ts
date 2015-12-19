@@ -261,14 +261,14 @@ module TSOS{
                    // _Kernel.krnTrace("current location = " + currentlyExecuting.location.toString() + " next = " + nextProcess.location.toString());
 
 
-                        if (nextProcess != undefined && nextProcess.location == "disk") {
+                       // if (nextProcess != undefined && nextProcess.location == "disk") {
 
-                            _Kernel.krnTrace("THIS IS RUNNING MAn");
-                            this.swap("", 0);
+                          //  _Kernel.krnTrace("THIS IS RUNNING MAn");
+                         //   this.swap("", 0);
 
-                        }
+                       // }
 
-                    else {
+                    
 
                             _Kernel.krnTrace("THIS IS RUNNING YO");
 
@@ -278,7 +278,7 @@ module TSOS{
                             currentlyExecuting.state = 2;
                             currentlyExecuting = readyQueue.dequeue();
                             _CPU.updateCPU(currentlyExecuting);
-                        }
+
 
                     // this means that there is no more processes and currently executing is the last process, just set executing to false
                     } else {

@@ -175,19 +175,17 @@ var TSOS;
             // back to true, and then switch the PCBS, make sure to set the state to 2 for terminated before switching PCBs
             if (readyQueue.getSize() > 0) {
                 // _Kernel.krnTrace("current location = " + currentlyExecuting.location.toString() + " next = " + nextProcess.location.toString());
-                if (nextProcess != undefined && nextProcess.location == "disk") {
-                    _Kernel.krnTrace("THIS IS RUNNING MAn");
-                    this.swap("", 0);
-                }
-                else {
-                    _Kernel.krnTrace("THIS IS RUNNING YO");
-                    _CPU.isExecuting = true;
-                    _Kernel.krnTrace("LENGTH IS" + readyQueue.getSize());
-                    _CPU.updatePCB(_CPU);
-                    currentlyExecuting.state = 2;
-                    currentlyExecuting = readyQueue.dequeue();
-                    _CPU.updateCPU(currentlyExecuting);
-                }
+                // if (nextProcess != undefined && nextProcess.location == "disk") {
+                //  _Kernel.krnTrace("THIS IS RUNNING MAn");
+                //   this.swap("", 0);
+                // }
+                _Kernel.krnTrace("THIS IS RUNNING YO");
+                _CPU.isExecuting = true;
+                _Kernel.krnTrace("LENGTH IS" + readyQueue.getSize());
+                _CPU.updatePCB(_CPU);
+                currentlyExecuting.state = 2;
+                currentlyExecuting = readyQueue.dequeue();
+                _CPU.updateCPU(currentlyExecuting);
             }
             else {
                 //_CPU.updatePCB(_CPU);
