@@ -48,7 +48,7 @@ var TSOS;
                         opCodeEnd += 2;
                     }
                 }
-                currentlyExecuting = readyQueue.dequeue();
+                currentlyExecuting = nextProcess;
                 TSOS.fileSystemDeviceDriver.deleteFile("process" + nextProcess.pid.toString());
                 TSOS.Control.updateFileSystemTable();
                 _CPU.updateCPU(currentlyExecuting);
@@ -176,10 +176,11 @@ var TSOS;
             if (readyQueue.getSize() > 0) {
                 // _Kernel.krnTrace("current location = " + currentlyExecuting.location.toString() + " next = " + nextProcess.location.toString());
                 if (nextProcess != undefined && nextProcess.location == "disk") {
-                    _Kernel.krnTrace("THIS IS RUNNING");
+                    _Kernel.krnTrace("THIS IS RUNNING MAn");
                     this.swap("", 0);
                 }
                 else {
+                    _Kernel.krnTrace("THIS IS RUNNING YO");
                     _CPU.isExecuting = true;
                     _Kernel.krnTrace("LENGTH IS" + readyQueue.getSize());
                     _CPU.updatePCB(_CPU);
