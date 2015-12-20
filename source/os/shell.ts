@@ -652,6 +652,7 @@ module TSOS {
                 _StdOut.putText("RLC " + residentList[counter].pid);
                 readyQueue.enqueue(residentList[counter]);
                 _Kernel.krnTrace("SIZE OF Q IS " + residentList.length);
+                _Kernel.krnTrace("FIRST PID IS  " + readyQueue.index(0).pid.toString());
                 //_Kernel.krnTrace("ready queue at " + counter + " is " + readyQueue.dequeue().pid);
                 counter++;
 

@@ -20,39 +20,99 @@ var TSOS;
         cpuScheduler.swap = function (fileNameRollIn, pids) {
             // first, you need to clear the segment in memory for the currently executing PCB
             //then, you want to take the hex string in the disk and read it, then, in the currently executing
-            var nextProcess = readyQueue.index(currentlyExecuting.pid + 1);
-            if (nextProcess != undefined) {
+            var nextProcess = readyQueue.index(0);
+            _CPU.updatePCB(_CPU);
+            if (roundRobin) {
                 nextProcess.location == "memory";
                 nextProcess.base = currentlyExecuting.base;
                 nextProcess.limit = currentlyExecuting.limit;
-                nextProcess.PC = currentlyExecuting.base;
-                _Kernel.krnTrace("BASE = " + nextProcess.base + " LIMIT = " + nextProcess.limit + " PC =" + nextProcess.PC);
-                // _Kernel.krnTrace()
-                //fileSystemDeviceDriver.createFile("process"+currentlyExecuting.pid.toString());
-                // fileSystemDeviceDriver.writeFile("process"+currentlyExecuting.pid.toString(), memManager.getOpCodeStringFromMemory(currentlyExecuting.base, currentlyExecuting.limit));
-                var opCodes = TSOS.fileSystemDeviceDriver.readChain("process" + nextProcess.pid.toString());
-                var opCodeStart = 0;
-                var opCodeEnd = 1;
-                var counter = nextProcess.base;
-                memManager.clearSegment(counter, nextProcess.limit);
-                for (var i = counter; i < nextProcess.limit; i++) {
-                    var codes = opCodes.charAt(opCodeStart) + opCodes.charAt(opCodeEnd);
-                    if (codes == "") {
-                        mem.opcodeMemory[i] = "00";
-                        opCodeStart += 2;
-                        opCodeEnd += 2;
+                //_Kernel.krnTrace("PC IS " + nextProcess.PC);
+                if (nextProcess.PC > 0) {
+                    _Kernel.krnTrace("HERES THE PC AFTER PROCESS CAME FROM FILE SYSTEM " + nextProcess.PC);
+                    if (nextProcess.PC > 0 && nextProcess.PC < 256) {
+                        _Kernel.krnTrace(" FILE SYSTEM PROCESS WAS IN FIRST SEGMENT");
+                        nextProcess.PC = nextProcess.PC + currentlyExecuting.base;
                     }
-                    else {
-                        mem.opcodeMemory[i] = codes;
-                        opCodeStart += 2;
-                        opCodeEnd += 2;
+                    if (nextProcess.PC >= 256 && nextProcess.PC < 511) {
+                        _Kernel.krnTrace(" FILE SYSTEM PROCESS WAS IN SECOND SEGMENT");
+                        nextProcess.PC = (nextProcess.PC) - 256;
+                    }
+                    if (nextProcess.PC >= 511 && nextProcess.PC < 768) {
+                        _Kernel.krnTrace(" FILE SYSTEM PROCESS WAS IN THIRD SEGMENT");
+                        nextProcess.PC = (nextProcess.PC) - 256;
                     }
                 }
-                currentlyExecuting = nextProcess;
-                TSOS.fileSystemDeviceDriver.deleteFile("process" + nextProcess.pid.toString());
-                TSOS.Control.updateFileSystemTable();
-                _CPU.updateCPU(currentlyExecuting);
-                _CPU.isExecuting = true;
+                else {
+                    nextProcess.PC = currentlyExecuting.base;
+                    _Kernel.krnTrace("YO CHECK THIS OUT");
+                }
+                _Kernel.krnTrace("BASE = " + nextProcess.base + " LIMIT = " + nextProcess.limit + " PC =" + nextProcess.PC);
+                TSOS.fileSystemDeviceDriver.createFile("process" + currentlyExecuting.pid.toString());
+                _Kernel.krnTrace("CREATING FILE PROCESS" + currentlyExecuting.pid.toString() + "ITS PC IS " + currentlyExecuting.PC.toString());
+                //_Kernel.krnTrace("PROCESS OP CODES GOING TO EMMORY " + memManager.getOpCodeStringFromMemory(currentlyExecuting.base, currentlyExecuting.limit));
+                TSOS.fileSystemDeviceDriver.writeFile("process" + currentlyExecuting.pid.toString(), memManager.getOpCodeStringFromMemory(currentlyExecuting.base, currentlyExecuting.limit));
+                currentlyExecuting.location = "disk";
+                if (nextProcess != undefined) {
+                    var opCodes = TSOS.fileSystemDeviceDriver.readChain("process" + nextProcess.pid.toString());
+                    var opCodeStart = 0;
+                    var opCodeEnd = 1;
+                    var counter = nextProcess.base;
+                    memManager.clearSegment(counter, nextProcess.limit);
+                    for (var i = counter; i < nextProcess.limit; i++) {
+                        var codes = opCodes.charAt(opCodeStart) + opCodes.charAt(opCodeEnd);
+                        if (codes == "") {
+                            mem.opcodeMemory[i] = "00";
+                            opCodeStart += 2;
+                            opCodeEnd += 2;
+                        }
+                        else {
+                            mem.opcodeMemory[i] = codes;
+                            opCodeStart += 2;
+                            opCodeEnd += 2;
+                        }
+                    }
+                    readyQueue.enqueue(currentlyExecuting);
+                    TSOS.fileSystemDeviceDriver.deleteFile("process" + nextProcess.pid.toString());
+                    currentlyExecuting = readyQueue.dequeue();
+                    TSOS.Control.updateFileSystemTable();
+                    _CPU.updateCPU(currentlyExecuting);
+                    _CPU.isExecuting = true;
+                }
+            }
+            else {
+                if (nextProcess != undefined) {
+                    nextProcess.location == "memory";
+                    nextProcess.base = currentlyExecuting.base;
+                    nextProcess.limit = currentlyExecuting.limit;
+                    nextProcess.PC = currentlyExecuting.base;
+                    _Kernel.krnTrace("BASE = " + nextProcess.base + " LIMIT = " + nextProcess.limit + " PC =" + nextProcess.PC);
+                    // _Kernel.krnTrace()
+                    //fileSystemDeviceDriver.createFile("process"+currentlyExecuting.pid.toString());
+                    // fileSystemDeviceDriver.writeFile("process"+currentlyExecuting.pid.toString(), memManager.getOpCodeStringFromMemory(currentlyExecuting.base, currentlyExecuting.limit));
+                    var opCodes = TSOS.fileSystemDeviceDriver.readChain("process" + nextProcess.pid.toString());
+                    var opCodeStart = 0;
+                    var opCodeEnd = 1;
+                    var counter = nextProcess.base;
+                    memManager.clearSegment(counter, nextProcess.limit);
+                    for (var i = counter; i < nextProcess.limit; i++) {
+                        var codes = opCodes.charAt(opCodeStart) + opCodes.charAt(opCodeEnd);
+                        if (codes == "") {
+                            mem.opcodeMemory[i] = "00";
+                            opCodeStart += 2;
+                            opCodeEnd += 2;
+                        }
+                        else {
+                            mem.opcodeMemory[i] = codes;
+                            opCodeStart += 2;
+                            opCodeEnd += 2;
+                        }
+                    }
+                    currentlyExecuting = readyQueue.dequeue();
+                    TSOS.fileSystemDeviceDriver.deleteFile("process" + nextProcess.pid.toString());
+                    TSOS.Control.updateFileSystemTable();
+                    _CPU.updateCPU(currentlyExecuting);
+                    _CPU.isExecuting = true;
+                }
             }
         };
         cpuScheduler.runSingleFromDisk = function (fileName, pid) {
@@ -157,35 +217,43 @@ var TSOS;
                 //to the CPUs contents. put it back in the queue, and set the currently executing PCB to the next thing in the queue.
                 // set its state to 1 for executing
                 if (readyQueue.getSize() > 0) {
-                    currentlyExecuting.state = 0;
-                    _CPU.updatePCB(_CPU);
-                    readyQueue.enqueue(currentlyExecuting);
-                    currentlyExecuting = readyQueue.dequeue();
-                    currentlyExecuting.state = 1;
-                    _CPU.updateCPU(currentlyExecuting);
+                    var nextProcess = readyQueue.index(0);
+                    if (nextProcess != undefined && nextProcess.location == "disk") {
+                        this.swap("", 0);
+                    }
+                    else {
+                        currentlyExecuting.state = 0;
+                        _CPU.updatePCB(_CPU);
+                        readyQueue.enqueue(currentlyExecuting);
+                        currentlyExecuting = readyQueue.dequeue();
+                        currentlyExecuting.state = 1;
+                        _CPU.updateCPU(currentlyExecuting);
+                    }
                 }
             }
         };
         cpuScheduler.contextSwitchBreak = function () {
             quantumCounter = 0;
-            var nextProcess = readyQueue.index(currentlyExecuting.pid + 1);
             // _Kernel.krnTrace("next pid " + nextProcess.pid);
             _Kernel.krnTrace("BREAK SWTICH ---- READY Q SIZE IS" + readyQueue.getSize());
             //  set the quantu back to 0, and then check if the ready queue has items in it. If there is, set executing
             // back to true, and then switch the PCBS, make sure to set the state to 2 for terminated before switching PCBs
             if (readyQueue.getSize() > 0) {
-                // _Kernel.krnTrace("current location = " + currentlyExecuting.location.toString() + " next = " + nextProcess.location.toString());
-                // if (nextProcess != undefined && nextProcess.location == "disk") {
-                //  _Kernel.krnTrace("THIS IS RUNNING MAn");
-                //   this.swap("", 0);
-                // }
-                _Kernel.krnTrace("THIS IS RUNNING YO");
-                _CPU.isExecuting = true;
-                _Kernel.krnTrace("LENGTH IS" + readyQueue.getSize());
-                _CPU.updatePCB(_CPU);
-                currentlyExecuting.state = 2;
-                currentlyExecuting = readyQueue.dequeue();
-                _CPU.updateCPU(currentlyExecuting);
+                var nextProcess = readyQueue.index(0);
+                _Kernel.krnTrace("current location = " + currentlyExecuting.location.toString() + " next = " + nextProcess.pid.toString());
+                if (nextProcess != undefined && nextProcess.location == "disk") {
+                    _Kernel.krnTrace("THIS IS RUNNING MAn");
+                    this.swap("", 0);
+                }
+                else {
+                    _Kernel.krnTrace("THIS IS RUNNING YO");
+                    _CPU.isExecuting = true;
+                    _Kernel.krnTrace("LENGTH IS" + readyQueue.getSize());
+                    _CPU.updatePCB(_CPU);
+                    currentlyExecuting.state = 2;
+                    currentlyExecuting = readyQueue.dequeue();
+                    _CPU.updateCPU(currentlyExecuting);
+                }
             }
             else {
                 //_CPU.updatePCB(_CPU);

@@ -36,13 +36,13 @@ export class memoryManager {
                    prosBlock.init(pid, 0,0,0, priority, "disk");
                    residentList.push(prosBlock);
                    fileSystemDeviceDriver.createFile("process" + prosBlock.pid.toString());
-                   _StdOut.advanceLine();
+                   //_StdOut.advanceLine();
                    fileSystemDeviceDriver.writeFile("process" + prosBlock.pid.toString(), instructions);
 
 
                    Control.updateFileSystemTable();
                    pid++;
-                   _StdOut.putText("Program loaded to disk");
+                   _StdOut.putText("Program loaded to disk successfully");
 
                }
                //If the memory exists, start loading in starting at the index of the base register
@@ -153,13 +153,13 @@ export class memoryManager {
             var opCodeString ="";
             for(var i = base; i < limit; i++){
 
-                _Kernel.krnTrace("CODES FOR SWAPPING ARE " + mem.opcodeMemory[i]);
+               // _Kernel.krnTrace("CODES FOR SWAPPING ARE " + mem.opcodeMemory[i]);
                 opCodeString  += mem.opcodeMemory[i];
 
 
             }
-            _Kernel.krnTrace("OPCODE STRIGNG PRE HEX MEM IS " + opCodeString);
-            _Kernel.krnTrace("OPCODE STRING FROM MEMORY IS " + fileSystemDeviceDriver.convertStringToHex(opCodeString));
+           // _Kernel.krnTrace("OPCODE STRIGNG PRE HEX MEM IS " + opCodeString);
+            //_Kernel.krnTrace("OPCODE STRING FROM MEMORY IS " + fileSystemDeviceDriver.convertStringToHex(opCodeString));
             return opCodeString;
         }
     }

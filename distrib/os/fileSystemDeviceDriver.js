@@ -47,13 +47,13 @@ var TSOS;
         };
         //Method to add 00s where file data space is unused
         fileSystemDeviceDriver.finishData = function (value) {
-            _Kernel.krnTrace(" length of before string is " + value.length);
+            //_Kernel.krnTrace(" length of before string is " + value.length);
             var finalData = value;
             for (var i = 0; i < 60 - (value.length / 2); i++) {
                 finalData += "00";
             }
-            _Kernel.krnTrace("This is the value of the whole string" + finalData);
-            _Kernel.krnTrace(" length of string is " + finalData.length);
+            // _Kernel.krnTrace("This is the value of the whole string" + finalData);
+            // _Kernel.krnTrace(" length of string is " + finalData.length);
             return finalData;
         };
         //Method to convert the given file name to hex digits
@@ -77,7 +77,7 @@ var TSOS;
                 //  _Kernel.krnTrace("HEX CODE = " + hexCode);
                 var ascii = parseInt(hexCode, 16);
                 // _Kernel.krnTrace("CODE FOR ZEROZERO BECOMES= " + parseInt()
-                _Kernel.krnTrace("ASCII = " + ascii);
+                //_Kernel.krnTrace("ASCII = " +ascii);
                 var string = String.fromCharCode(ascii);
                 // if(string.length == 1){
                 //     string = "0" + string;
@@ -153,14 +153,14 @@ var TSOS;
         fileSystemDeviceDriver.checkDirectoryForNameDataTSB = function (fileName) {
             //convert the name to hex for easier matching
             var nameToMatch = this.convertStringToHex(fileName);
-            _Kernel.krnTrace("MATCH NAME IS " + nameToMatch);
+            // _Kernel.krnTrace("MATCH NAME IS " + nameToMatch);
             var zeroTrack = "0";
             for (var s = 0; s < 8; s++) {
                 for (var b = 0; b < 8; b++) {
                     var directoryKey = zeroTrack + s.toString() + b.toString();
-                    _Kernel.krnTrace("HERES THE SLICED STRING " + sessionStorage.getItem(directoryKey).slice(4, nameToMatch.length + 4));
+                    // _Kernel.krnTrace("HERES THE SLICED STRING " +  sessionStorage.getItem(directoryKey).slice(4, nameToMatch.length+4));
                     if (sessionStorage.getItem(directoryKey).slice(4, nameToMatch.length + 4) == nameToMatch) {
-                        _Kernel.krnTrace("WE THE BLOCK WITH THE MATCHING NAME" + directoryKey);
+                        // _Kernel.krnTrace("WE THE BLOCK WITH THE MATCHING NAME"  + directoryKey);
                         //IF we have the block with the matching name, what we REALLY want is the second through 4th
                         //data bits, because thats the corresponding DataTrackTSB
                         //this is the tsb where we can start to write our file
@@ -174,12 +174,12 @@ var TSOS;
         // returns the tsb of the directory block a file name is stored in
         fileSystemDeviceDriver.getDirectoryBlockTSB = function (fileName) {
             var nameToMatch = this.convertStringToHex(fileName);
-            _Kernel.krnTrace("MATCH NAME IS " + nameToMatch);
+            // _Kernel.krnTrace("MATCH NAME IS " + nameToMatch);
             var zeroTrack = "0";
             for (var s = 0; s < 8; s++) {
                 for (var b = 0; b < 8; b++) {
                     var directoryKey = zeroTrack + s.toString() + b.toString();
-                    _Kernel.krnTrace("HERES THE SLICED STRING " + sessionStorage.getItem(directoryKey).slice(4, nameToMatch.length + 4));
+                    // _Kernel.krnTrace("HERES THE SLICED STRING " +  sessionStorage.getItem(directoryKey).slice(4, nameToMatch.length+4));
                     if (sessionStorage.getItem(directoryKey).slice(4, nameToMatch.length + 4) == nameToMatch) {
                         return directoryKey;
                     }
@@ -228,8 +228,8 @@ var TSOS;
             var endSubString = 60;
             while (this.getNextTSB(firstDataBlock) != "000") {
                 var substring = this.convertStringToHex(fileData.slice(startSubString, endSubString));
-                _Kernel.krnTrace("START SUBSTRING = " + startSubString + " END SUBSTRING = " + endSubString);
-                _Kernel.krnTrace("SUBSTRING = " + substring + "ITS LENGTH IS " + substring.length);
+                //_Kernel.krnTrace("START SUBSTRING = " + startSubString + " END SUBSTRING = " + endSubString);
+                //_Kernel.krnTrace("SUBSTRING = " + substring + "ITS LENGTH IS " + substring.length);
                 // var substring = hex.substr(startSubString, endSubString);
                 // _Kernel.krnTrace("SUBSTRIGN IS " + substring);
                 sessionStorage.setItem(firstDataBlock, "1" + this.getNextTSB(firstDataBlock) + substring);
@@ -256,7 +256,7 @@ var TSOS;
                 }
                 data += sessionStorage.getItem(firstDataBlock).slice(4);
                 var ascii = this.convertHexToString(data);
-                _Kernel.krnTrace("returned " + ascii);
+                // _Kernel.krnTrace("returned " + ascii);
                 return ascii;
             }
         };

@@ -24,11 +24,11 @@ var TSOS;
                     prosBlock.init(pid, 0, 0, 0, priority, "disk");
                     residentList.push(prosBlock);
                     TSOS.fileSystemDeviceDriver.createFile("process" + prosBlock.pid.toString());
-                    _StdOut.advanceLine();
+                    //_StdOut.advanceLine();
                     TSOS.fileSystemDeviceDriver.writeFile("process" + prosBlock.pid.toString(), instructions);
                     TSOS.Control.updateFileSystemTable();
                     pid++;
-                    _StdOut.putText("Program loaded to disk");
+                    _StdOut.putText("Program loaded to disk successfully");
                 }
                 else {
                     // Loop through each two character "byte" of user input
@@ -95,11 +95,11 @@ var TSOS;
         memoryManager.prototype.getOpCodeStringFromMemory = function (base, limit) {
             var opCodeString = "";
             for (var i = base; i < limit; i++) {
-                _Kernel.krnTrace("CODES FOR SWAPPING ARE " + mem.opcodeMemory[i]);
+                // _Kernel.krnTrace("CODES FOR SWAPPING ARE " + mem.opcodeMemory[i]);
                 opCodeString += mem.opcodeMemory[i];
             }
-            _Kernel.krnTrace("OPCODE STRIGNG PRE HEX MEM IS " + opCodeString);
-            _Kernel.krnTrace("OPCODE STRING FROM MEMORY IS " + TSOS.fileSystemDeviceDriver.convertStringToHex(opCodeString));
+            // _Kernel.krnTrace("OPCODE STRIGNG PRE HEX MEM IS " + opCodeString);
+            //_Kernel.krnTrace("OPCODE STRING FROM MEMORY IS " + fileSystemDeviceDriver.convertStringToHex(opCodeString));
             return opCodeString;
         };
         return memoryManager;
