@@ -161,50 +161,49 @@ var TSOS;
             _CPU.isExecuting = true;
         };
         //sorting for the PCBS with priority.
-        cpuScheduler.merge = function (left, right) {
-            var result = [];
-            while (left.length > 0 && right.length > 0) {
-                if (left[0].priority < right[0].priority) {
-                    result.push(left.shift());
+        // uses merge sort
+        cpuScheduler.merge = function (leftArray, rightArray) {
+            var concat = [];
+            while (leftArray.length > 0 && rightArray.length > 0) {
+                if (leftArray[0].priority < rightArray[0].priority) {
+                    concat.push(leftArray.shift());
                 }
-                else if (left[0].priority == right[0].priority) {
-                    result.push(left.shift());
+                else if (leftArray[0].priority == rightArray[0].priority) {
+                    concat.push(leftArray.shift());
                 }
                 else {
-                    result.push(right.shift());
+                    concat.push(rightArray.shift());
                 }
             }
-            result = result.concat(left).concat(right);
+            concat = concat.concat(leftArray).concat(rightArray);
             //make sure remaining arrays are empty
-            left.splice(0, left.length);
-            right.splice(0, right.length);
-            return result;
+            leftArray.splice(0, leftArray.length);
+            rightArray.splice(0, rightArray.length);
+            return concat;
         };
         /**
-         * Sorts an array in ascending natural order using
+         * Sorts an array in ascending order using
          * merge sort.
-         * @param {Array} items The array to sort.
-         * @return {Array} The sorted array.
          */
-        cpuScheduler.orderResidentList = function (items) {
+        cpuScheduler.orderResidentList = function (RL) {
             // Terminal condition - don't need to do anything for arrays with 0 or 1 items
-            if (items.length < 2) {
-                return items;
+            if (RL.length < 2) {
+                return RL;
             }
-            var work = [];
+            var sortedRL = [];
             var i;
             var len;
-            for (i = 0, len = items.length; i < len; i++) {
-                work.push([items[i]]);
+            for (i = 0, len = RL.length; i < len; i++) {
+                sortedRL.push([RL[i]]);
             }
-            work.push([]); //in case of odd number of items
+            sortedRL.push([]); //in case of odd number of items
             for (var lim = len; lim > 1; lim = Math.floor((lim + 1) / 2)) {
                 for (var j = 0, k = 0; k < lim; j++, k += 2) {
-                    work[j] = this.merge(work[k], work[k + 1]);
+                    sortedRL[j] = this.merge(sortedRL[k], sortedRL[k + 1]);
                 }
-                work[j] = []; //in case of odd number of items
+                sortedRL[j] = []; //in case of odd number of items
             }
-            return work[0];
+            return sortedRL[0];
         };
         //method to switch process control blocks
         // if the counter in CPU reaches the quantum,
